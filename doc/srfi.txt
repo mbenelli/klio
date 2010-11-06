@@ -1,0 +1,15 @@
+* Srfi names mapping
+
+list     ->  1. List Library
+andlet   ->  2. AND-LET*: an AND with local bindings, a guarded LET* special form [*]
+mvalues  -> 11. Syntax for receiving multiple values [*]
+string   -> 13. String Library
+charset  -> 14. Character-Set Library
+datetime -> 19. Time Data Types and Procedures
+array    -> 25. Multi-dimensional Array Primitives
+cut      -> 26. Notation for Specializing Parameters without Currying [*]
+ec       -> 42. Eager Comprehensions [*]
+optional -> 89. Optional and named parameters [*]
+
+[*] syntactic extensions
+

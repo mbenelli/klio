@@ -1,0 +1,51 @@
+AUTHORS                                                         -*- outline -*-
+
+A list of author of collected code.
+See each module for licenging information.
+I have modified some stuff around, so I'm the one to blame, if something
+doesn't work. 
+
+* Oleg Kyselyov
+
+srfi-2 (in prelude)
+assert (in prelude)
+input-parse
+ssax
+sxml
+
+
+* Alex Shinn
+
+irregex
+
+
+* Olin Shivers
+
+lists
+charsets
+strings
+
+
+* Scott G. Miller
+
+format
+
+
+* Will Fitzgerald
+
+datetime
+
+
+* Taylor Campbell
+
+vectors
+
+
+* Dominique Boucher
+
+json
+
+
+* Sebastian Egner
+
+srfi-26 (in prelude)

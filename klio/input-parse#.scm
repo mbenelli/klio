@@ -1,0 +1,11 @@
+(##namespace
+  ("input-parse#"
+   peek-next-char
+   assert-curr-char
+   skip-until
+   skip-while
+   input-parse:init-buffer
+   next-token
+   next-token-of
+   read-text-line
+   read-string))
