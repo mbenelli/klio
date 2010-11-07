@@ -1,4 +1,9 @@
-;;; SRFI-14 character-sets library                              -*- Scheme -*-
+;; charsets.scm - Srfi-14 char-set library
+;;
+;; Copyright (c) 2010 by Marco Benelli <mbenelli@yahoo.com>
+;; All Rights Reserved.
+;;
+;; Original notes:
 ;;;
 ;;; - Ported from MIT Scheme runtime by Brian D. Carlstrom.
 ;;; - Massively rehacked & extended by Olin Shivers 6/98.

@@ -1,3 +1,9 @@
+;; strings#.scm - Srfi-13 string library
+;;
+;; Copyright (c) 2010 by Marco Benelli <mbenelli@yahoo.com>
+;; All Rights Reserved.
+
+
 (namespace
  ("strings#"
                                         ; predicates

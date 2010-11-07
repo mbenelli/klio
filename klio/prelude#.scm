@@ -1,3 +1,9 @@
+;; prelude.scm - A prelude for Gambit-C scheme.
+;;
+;; Copyright (c) 2008-2010 by Marco Benelli <mbenelli@yahoo.com>
+;; All Rights Reserved.
+
+
 (namespace
  ("prelude#"
   identity
@@ -101,7 +107,8 @@
               (set-cdr! growth-point `((let (,claw) (and . ,var-cell))))
               (set! growth-point var-cell)))
           (else
-            (ct-error-syntax "An ill-formed binding in a syntactic form and-let* "
+            (ct-error-syntax
+              "An ill-formed binding in a syntactic form and-let* "
               claw))
         ))
       claws)

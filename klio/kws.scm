@@ -1,3 +1,8 @@
+;; kws.scm - Klio web server
+;;
+;; Copyright (c) 2010 by Marco Benelli <mbenelli@yahoo.com>
+;; All Rights Reserved.
+
 (##namespace ("kws#"))
 (##include "~~lib/gambit#.scm")
 (##include "base64#.scm")

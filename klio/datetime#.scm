@@ -1,3 +1,9 @@
+;; Gambit port of SRFI-19: Time Data Types and Procedures.
+;;
+;; Copyright (c) 2009, 2010 by Marco Benelli <mbenelli@yahoo.com>
+;; All Rights Reserved.
+
+
 (namespace
  ("datetime#"
   gambit:current-time

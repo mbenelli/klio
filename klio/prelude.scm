@@ -1,9 +1,8 @@
-;; prelude.scm - Standard prelude for Gambit-C scheme.
+;; prelude.scm - A prelude for Gambit-C scheme.
 ;;
-;; Copyright (c) 2008-2010 by Marco Benelli. All Rights Reserved.
-;;
-;; Released under a dual LGPL 2.1 and Apache 2.0 license.
-;; You can choose whichever license you prefer.
+;; Copyright (c) 2008-2010 by Marco Benelli <mbenelli@yahoo.com>
+;; All Rights Reserved.
+
 
 (##namespace ("prelude#"))
 (##include "~~lib/gambit#.scm")

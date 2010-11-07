@@ -1,9 +1,11 @@
-;;; SRFI 13 string library for Gambit                            -*- Scheme -*-
-;;; Copyright (c) 2009, Benelli Marco <mbenelli@yahoo.com>
-;;;
-;;; Based of srfi-13 reference implementation.
-;;; There is also a couple of bug-fixes suggested in post-finalization
-;;; discussion (string-concatenate-reverse/shared and make-kmp-restart-vector)
+;; strings.scm - Srfi-13 string library
+;;
+;; Copyright (c) 2009, 2010 by Marco Benelli <mbenelli@yahoo.com>
+;; All Rights Reserved.
+;;
+;; Based of srfi-13 reference implementation.
+;; There is also a couple of bug-fixes suggested in post-finalization
+;; discussion (string-concatenate-reverse/shared and make-kmp-restart-vector)
 
 (##namespace ("strings#"))
 (##include "~~lib/gambit#.scm")

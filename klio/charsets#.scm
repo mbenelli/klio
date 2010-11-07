@@ -1,3 +1,9 @@
+;; charsets#.scm - Srfi-14 char-set library
+;;
+;; Copyright (c) 2010 by Marco Benelli <mbenelli@yahoo.com>
+;; All Rights Reserved.
+
+
 (namespace
  ("charsets#"
                                         ; predicates & comparison

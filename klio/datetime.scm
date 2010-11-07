@@ -1,6 +1,7 @@
 ;; Gambit port of SRFI-19: Time Data Types and Procedures.
 ;;
-;; Author: Marco Benelli <marco.benelli@spesonline.com>
+;; Copyright (c) 2009, 2010 by Marco Benelli <mbenelli@yahoo.com>
+;; All Rights Reserved.
 ;;
 ;; Requirements:
 ;;
@@ -10,7 +11,7 @@
 ;; NOTES:
 ;;
 ;; 1. `current-time' clash with gambit's built-in. After loading this file,
-;;    use ##current-time to use the gambit's one.
+;;    use gambit:current-time to use the gambit's one.
 ;; 2. actually, process-time and thread-time are the same thing
 ;;
 ;;

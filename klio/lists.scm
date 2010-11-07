@@ -1,7 +1,15 @@
-;;; SRFI-1 list-processing library 			-*- Scheme -*-
-;;; Reference implementation
+;; lists.scm - Srfi-1 list library
+;;
+;; Copyright (c) 2010 by Marco Benelli <mbenelli@yahoo.com>
+;; All Rights Reserved.
+;;
+;; Original copyright notice:
+;;
+;;; Copyright (c) 1998, 1999 by Olin Shivers. You may do as you please with
+;;; this code as long as you do not remove this copyright notice or
+;;; hold me liable for its use. Please send bug reports to shivers@ai.mit.edu.
+;;;     -Olin
 
-;;; This is a Gambit adaptation
 
 (##namespace ("lists#"))
 (##include "~~lib/gambit#.scm")
@@ -15,10 +23,6 @@
   (fixnum))
 
 ;;;
-;;; Copyright (c) 1998, 1999 by Olin Shivers. You may do as you please with
-;;; this code as long as you do not remove this copyright notice or
-;;; hold me liable for its use. Please send bug reports to shivers@ai.mit.edu.
-;;;     -Olin
 
 ;;; This is a library of list- and pair-processing functions. I wrote it after
 ;;; carefully considering the functions provided by the libraries found in

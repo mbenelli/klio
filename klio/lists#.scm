@@ -1,3 +1,8 @@
+;; lists#.scm - Srfi-1 list library
+;;
+;; Copyright (c) 2010 by Marco Benelli <mbenelli@yahoo.com>
+;; All Rights Reserved.
+
 (namespace
  ("lists#"
                                         ; constructors
