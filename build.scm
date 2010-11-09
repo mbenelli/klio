@@ -13,7 +13,7 @@
     irregex
     datetime
     format
-    vector
+    vectors
 
     base64
     http
