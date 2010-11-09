@@ -188,9 +188,11 @@
 	(generator (request-query request))))))
 
 
-(define (kws port-number #!optional (multithread #f))
+(define (kws port-number #!key (multithread #f))
   (println port: (current-error-port)
     "Starting web server on port " port-number)
+  (println port: (current-error-port)
+    "Multithreading " (if multithread "enabled" "disabled"))
   (http-server-start!
     (make-http-server
       port-number: port-number
@@ -201,6 +203,6 @@
 (define (main . args)
   (cond
     ((= 2 (length args)) (parameterize ((*server-root* (cadr args)))
-                           (kws (string->number (car args)))))
+                           (kws (string->number (car args)) multithread: #t)))
     ((= 1 (length args (kws (string->number (car args))))))
-    (else (kws 8000))))
+    (else (kws 8000 multithread: #t))))
