@@ -47,6 +47,11 @@
 (define *pages* (make-table test: string=?))
 
 
+(table-set! *pages* "/rcgi.bin/jvmForm"
+  (lambda (args)
+    `(result (status "KO") (data "Not yet implemented"))))
+
+
 (table-set! *pages* "/test"
   (lambda (args)
     `(html (head (title "Test"))
