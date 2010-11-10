@@ -97,8 +97,6 @@
   (lambda (args)
     (exit)))
 
-;(define *server-root* (current-directory))
-;(define *server-root* "lab/www/hera_imola/")
 (define *server-root* (make-parameter (current-directory)))
 
 
@@ -129,19 +127,22 @@
 ;;;
 
 (define (mime path)
-  (cdr
-    (assoc (path-extension path)
-      '((".html" . "text/html")
-        (".htm"  . "text/html")
-        (".css"  . "text/css")
-        (".txt"  . "text/plain")
-        (""      . "text/plain")
-        (".js"   . "application/javascript")
-        (".json" . "application/json")
-        (".bmp"  . "image/bmp")
-        (".jpg"  . "image/jpg")
-        (".jpeg" . "image/jpeg")
-        (".png"  . "image/png")))))
+  (or
+    (and-let* ((mimetype (assoc (path-extension path)
+                           '((".html" . "text/html")
+                             (".htm"  . "text/html")
+                             (".css"  . "text/css")
+                             (".txt"  . "text/plain")
+                             (""      . "text/plain")
+                             (".js"   . "application/javascript")
+                             (".json" . "application/json")
+                             (".bmp"  . "image/bmp")
+                             (".ico"  . "image/ico")
+                             (".jpg"  . "image/jpg")
+                             (".jpeg" . "image/jpeg")
+                             (".png"  . "image/png")))))
+      (cdr mimetype))
+    #f))
 
 (define (last-modified path)
   (let* ((filename (string-append
@@ -188,21 +189,24 @@
 	(generator (request-query request))))))
 
 
-(define (kws port-number #!key (multithread #f))
-  (println port: (current-error-port)
-    "Starting web server on port " port-number)
-  (println port: (current-error-port)
-    "Multithreading " (if multithread "enabled" "disabled"))
-  (http-server-start!
-    (make-http-server
-      port-number: port-number
-      threaded?: multithread
-      GET: dispatch
-      POST: post)))
+(define (kws #!key
+          (port-number 8000)
+          (multithread #f)
+          (server-root (*server-root*)))
 
-(define (main . args)
-  (cond
-    ((= 2 (length args)) (parameterize ((*server-root* (cadr args)))
-                           (kws (string->number (car args)) multithread: #t)))
-    ((= 1 (length args (kws (string->number (car args))))))
-    (else (kws 8000 multithread: #t))))
+  (println port: (current-error-port)
+    "\nStarting Klio Web Server\n\n"
+    "Port: " port-number #\newline
+    "Server root: " server-root #\newline
+    "Multithreading: " (if multithread "enabled" "disabled") #\newline)
+  (force-output (current-error-port))
+
+  (parameterize ((*server-root* server-root))
+    (pp (*server-root*))
+    (force-output (current-error-port))
+    (http-server-start!
+      (make-http-server
+        port-number: port-number
+        threaded?: multithread
+        GET: dispatch
+        POST: post))))
