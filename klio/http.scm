@@ -8,13 +8,14 @@
 
 (##namespace ("http#"))
 (##include "~~lib/gambit#.scm")
+(##include "prelude#.scm")
 (##include "http#.scm")
 
 (declare
   (standard-bindings)
   (extended-bindings)
   (block)
-  (not safe)
+;  (not safe)
 )
 
 ;==============================================================================
@@ -717,6 +718,18 @@
   query
 )
 
+;; Persistent connection handling
+(define to-be-closed?
+  (lambda (request)
+    (pp (request-connection request))
+    (force-output (current-error-port))
+    (and-let* ((conn (assoc "Connection" (request-attributes request)))
+               (res (string-ci=? "close" (car conn))))
+      (pp "to-be-closed? -> ")
+      (pp res)
+      (force-output (current-error-port))
+      res)))
+
 (define make-http-server
   (##lambda (#!key
            (port-number 80)
@@ -823,7 +836,8 @@
            (connection
             (request-connection request))
            (version
-            (request-version request)))
+            (request-version request))
+           (to-be-closed (to-be-closed? request)))
 
       (define generate-reply
         (lambda (port)
@@ -838,10 +852,14 @@
                   (list version " 200 OK" eol
                     "Content-Length: " (u8vector-length message) eol
                     "Content-Type: " mime eol
-                    "Connection: close" eol
-                    (if last-modified
-                        (string-append "Last-Modified: " last-modified eol eol)
-                        eol)))
+                    ;;(string-append "Connection: close" eol eol)
+                    (if to-be-closed
+                        (string-append "Connection: close" eol eol)
+                        eol)
+                    ;; (if last-modified
+                    ;;     (string-append "Last-Modified: " last-modified eol eol)
+                    ;;     eol)
+                    ))
                 (write-subu8vector
                  message
                  0
@@ -860,7 +878,16 @@
             (force-output ##stdout-port)
             (write-subu8vector output 0 (u8vector-length output) connection)))
 
-      (close-port connection))))
+      ;;(close-port connection)
+      (cond
+        (to-be-closed
+          (close-port connection))
+        (else (force-output connection)
+          (serve-connection (request-server request) connection)
+          #;(thread-start!
+            (lambda () (serve-connection (request-server request) connection)))
+          ))
+      )))
 
 ; (define reply-html
 ;   (lambda (html)
