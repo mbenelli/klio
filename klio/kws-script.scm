@@ -11,3 +11,10 @@
 (include "http.scm")
 (include "datetime.scm")
 (include "kws.scm")
+
+(define (main . args)
+  (case (length args)
+    ((1) (kws#kws port-number: (string->number (car args)) multithread: #t))
+    ((2) (kws#kws port-number: (string->number (car args))
+           server-root: (cadr args) multithread: #t))
+    (else (kws#kws multithread: #t))))
