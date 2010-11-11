@@ -165,6 +165,8 @@
   (let* ((request (current-request))
          (uri (request-uri request))
          (path (uri-path uri)))
+    (pp (request-connection request))
+    (force-output (current-error-port))
     (or
       (and-let* ((generator (table-ref *pages* path #f)))
         (send-response (lambda () (generator (uri-query uri)))))
