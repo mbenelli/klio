@@ -8,14 +8,13 @@
 
 (##namespace ("http#"))
 (##include "~~lib/gambit#.scm")
-(##include "prelude#.scm")
 (##include "http#.scm")
 
 (declare
   (standard-bindings)
   (extended-bindings)
   (block)
-;  (not safe)
+  (not safe)
 )
 
 ;==============================================================================
@@ -719,16 +718,13 @@
 )
 
 ;; Persistent connection handling
-(define to-be-closed?
+(define keep-alive?
   (lambda (request)
-    (pp (request-connection request))
-    (force-output (current-error-port))
-    (and-let* ((conn (assoc "Connection" (request-attributes request)))
-               (res (string-ci=? "close" (car conn))))
-      (pp "to-be-closed? -> ")
-      (pp res)
-      (force-output (current-error-port))
-      res)))
+    (cond
+      ((not (server-threaded? (request-server request))) #f)
+      ((assoc "Connection" (request-attributes request))
+       => (lambda (x) (string-ci=? "keep-alive" (cdr x))))
+      (else #t))))
 
 (define make-http-server
   (##lambda (#!key
@@ -837,7 +833,7 @@
             (request-connection request))
            (version
             (request-version request))
-           (to-be-closed (to-be-closed? request)))
+           (to-be-closed (not (keep-alive? request))))
 
       (define generate-reply
         (lambda (port)
@@ -884,8 +880,6 @@
           (close-port connection))
         (else (force-output connection)
           (serve-connection (request-server request) connection)
-          #;(thread-start!
-            (lambda () (serve-connection (request-server request) connection)))
           ))
       )))
 
