@@ -1,6 +1,7 @@
-;==============================================================================
-
-; File: "http.scm", Time-stamp: <2009-03-13 12:05:07 feeley>
+;; Copyright (c) 2010 by Marco Benelli <mbenelli@yahoo.com>
+;; All Rights Reserved.
+;;
+;; Original copyright notice:
 
 ; Copyright (c) 2005-2008 by Marc Feeley, All Rights Reserved.
 
