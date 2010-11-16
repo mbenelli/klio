@@ -1,3 +1,96 @@
-A collection of scheme tools and libraries.
+KLIO                                                          -*- outline -*-
+
+
+* Description
+
+A collection of scheme tools and libraries for gambit scheme.
+Main components are:
+
+. klio libs
+. klio web-server
+
+** Klio lib
+
+Klio lib is a collection of standard scheme libraries gathered from the net.
+The libraries has been modified and reorganized to fit my way of working
+with gambit.
+If you're looking for gambit's libraries probably blackhole and snow will fit
+your needs better than klio.
+The distinctive "features" of klio are:
+
+- vs blackhole: Klio doesn't use hygienic macros, only gambit's
+  define-macro
+- vs snow: Klio doesn't require installation of any tool, and doesn't try to
+  be portable between implementations.
+
+** Klio web server
+
+Klio web server is a simple but powerful web-server.
+It's main goals are:
+
+- portability
+- reliable ad efficient implementation of HTTP 1.1
+- integraton with ssax-sxml for dinamic pages
+- good performance for small sites (few users) with heavy load (pages refreshed
+  periodically)
+
+
+* Installation
+
+** klio-libs
+
+Running:
+
+$ gsc -i build.scm
+
+from Klio's directory will build klio-lib.
+
+If you want to include/exclude some libs you must edit this file.
+Then, you can copy, files in some place of your choice.
+
+** klio-ws
+
+Run:
+
+$ gsc -exe lib/kws-script.scm
+
+will build an executable file in "lib" directory.
+The exectubable is named "kws-script" or "kws-script.exe" depending on you OS.
+You can change the name of resulting executable with -o option, see gambit's
+documentation.
+
+
+* Usage
+
+
+** klio-libs
+
+There is no search path, or autoloading or similar.
+The preferred way for developing with klio is the C-like way allowed by
+gambit's include and namespace.
+Be aware that some "header" file (those whose name end with "#") contains
+also macro definition, so they must be explicitely included.
+
+For those coming from a python (or similar) world it shold be possible to
+compile all files in a single loadble object, the load it at gambit's startup
+using .gambcini or gambcext (see gambit's documentation).
+Be aware that header files must be included.
+
+** klio-ws
+
+Run:
+
+$ ./klio-script <port number> <server-root-directory>
+
+If unspecified, server-root-directory will default to corrent directory,
+and port number to 8000.
+
+
+* License
+
+Klio is released under LLGPL, see file COPYING.
+A lot of klio's contents is derived from other works.
+All these works are in public domain or open sourced, see individual files for
+detailed information.
 A list of original authors is in file credits.txt on this directory.
 
