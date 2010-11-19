@@ -1,3 +1,8 @@
+;; Copyright (c) 2010 by Marco Benelli <mbenelli@yahoo.com>
+;; All Rights Reserved.
+;;
+;; Original taken from: http://okmij.org/ftp/Scheme/xml.html
+
 ;	Functional XML parsing framework: SAX/DOM and SXML parsers
 ;	      with support for XML Namespaces and validation
 ;
