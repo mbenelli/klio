@@ -5,8 +5,9 @@ KLIO                                                          -*- outline -*-
 
 A collection of scheme tools and libraries for gambit scheme.
 Main components are:
-. klio-lib
-. klio-ws
+
+. klio-lib : libraries
+. klio-ws  : web-server
 
 
 ** Klio-lib
@@ -14,7 +15,7 @@ Main components are:
 Klio lib is a collection of standard scheme libraries gathered from the net.
 The libraries has been modified and reorganized to fit my way of working
 with gambit.
-If you're looking for gambit's libraries probably blackhole and snow will fit
+If you're looking for gambit's libraries probably blackhole or snow will fit
 your needs better than klio.
 The distinctive "features" of klio are:
 
@@ -48,7 +49,6 @@ $ gsc -i build.scm
 
 from Klio's directory will build klio-lib.
 If you want to include/exclude some libs you must edit this file.
-Then, you can copy, files in some place of your choice.
 
 
 ** klio-ws
@@ -73,10 +73,10 @@ There is no search path, or autoloading or similar.
 The preferred way for developing with klio is the C-like way allowed by
 gambit's include and namespace.
 Be aware that some "header" file (those whose name end with "#") contains
-also macro definition, so they must be explicitely included.
+also macro definition.
 
-For those coming from a python (or similar) world it shold be possible to
-compile all files in a single loadble object, the load it at gambit's startup
+For those who like "batteries-included" philosophy it should be possible to
+compile all files in a single loadable object, the load it at gambit's startup
 using .gambcini or gambcext (see gambit's documentation).
 Be aware that header files must be included.
 
