@@ -7,7 +7,7 @@ A collection of scheme tools and libraries for gambit scheme.
 Main components are:
 
 . klio-lib : libraries
-. klio-ws  : web-server
+. kliows   : web-server
 
 
 ** Klio-lib
@@ -25,7 +25,7 @@ The distinctive "features" of klio are:
   be portable between implementations.
 
 
-** Klio-ws
+** Kliows
 
 Klio web server is a simple but powerful web-server.
 It's main goals are:
@@ -53,12 +53,15 @@ If you want to include/exclude some libs you must edit this file.
 
 ** klio-ws
 
-Run:
+NOTE FOR WINDOWS USERS: before building kliows you must edit the first line of
+file lib/kliows.scm , see gambit documentation.
 
-$ gsc -exe lib/kws-script.scm
+Running:
+
+$ gsc -exe lib/kliows.scm
 
 will build an executable file in "lib" directory.
-The exectubable is named "kws-script" or "kws-script.exe" depending on you OS.
+The exectubable is named "kliows" or "kliows.exe" depending on you OS.
 You can change the name of resulting executable with -o option, see gambit's
 documentation.
 
