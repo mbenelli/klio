@@ -1,4 +1,7 @@
-#!/usr/env gsi-script
+;; kliows.scm - Klio web server launcher
+;;
+;; Copyright (c) 2010 by Marco Benelli <mbenelli@yahoo.com>
+;; All Rights Reserved.
 
 (include "prelude.scm")
 (include "lists.scm")
@@ -12,9 +15,11 @@
 (include "datetime.scm")
 (include "kws.scm")
 
-(define (main . args)
+(define (main args)
   (case (length args)
     ((1) (kws#kws port-number: (string->number (car args)) multithread: #t))
     ((2) (kws#kws port-number: (string->number (car args))
            server-root: (cadr args) multithread: #t))
     (else (kws#kws multithread: #t))))
+
+(main (cdr (command-line)))

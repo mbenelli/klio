@@ -53,9 +53,6 @@ If you want to include/exclude some libs you must edit this file.
 
 ** klio-ws
 
-NOTE FOR WINDOWS USERS: before building kliows you must edit the first line of
-file lib/kliows.scm , see gambit documentation.
-
 Running:
 
 $ gsc -exe lib/kliows.scm
