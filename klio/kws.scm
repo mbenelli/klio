@@ -106,13 +106,25 @@
 
 
 (define (static-content path)
+  (call-with-input-file
+      (list
+        path: (string-append
+                (path-strip-trailing-directory-separator (*server-root*))
+                path))
+    (lambda (in)
+      (let loop ((b (read-u8 in)))
+        (cond
+          ((eof-object? b) (write-u8 b))
+          (else
+            (write-u8 b)
+            (loop (read-u8 in))))))))
+
+
+(define (static-content-old path)
   (with-exception-catcher
     (lambda (e)
       (if (no-such-file-or-directory-exception? e)
-          ;; TODO: sent proper http message
-          (println "<html><body>"
-            "Page " path " can't be found on this server."
-            "</body></html>")))
+          (not-found)))
     (lambda ()
       (call-with-input-file
           (list
@@ -147,7 +159,7 @@
                              (".jpeg" . "image/jpeg")
                              (".png"  . "image/png")))))
       (cdr mimetype))
-    #f))
+    "text/plain"))
 
 (define (last-modified path)
   (let* ((filename (string-append
@@ -170,9 +182,9 @@
     (or
       (and-let* ((generator (table-ref *pages* path #f)))
         (send-response (lambda () (generator (uri-query uri)))))
-      (reply (lambda () (static-content path))
+      (reply (lambda () (static-content-old path))
         mime: (mime path)
-;        last-modified: (last-modified path)
+        ;; last-modified: (last-modified path)
         ))))
 
 

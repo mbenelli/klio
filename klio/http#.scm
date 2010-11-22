@@ -16,6 +16,8 @@ reply
 reply-html
 current-request
 
+not-found
+
 make-request
 request?
 request-attributes

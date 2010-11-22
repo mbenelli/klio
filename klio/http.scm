@@ -781,26 +781,15 @@
             (serve-connection hs connection)))
       (loop))))
 
-; (define send-error
-;   (lambda (connection html)
-;     (write-html html connection)
-;     (close-port connection)))
 
 (define (send-error connection text)
   (write text connection)
   (close-port connection))
 
 
-; (define method-not-implemented-error
-;   (lambda (connection)
-;     (send-error
-;      connection
-;      (<html> (<head> (<title> "501 Method Not Implemented"))
-;              (<body>
-;               (<h1> "Method Not Implemented"))))))
-
 (define (method-not-implemented-error connection)
   (send-error connection "501 Method not implemented"))
+
 
 (define unimplemented-method
   (lambda ()
@@ -808,20 +797,31 @@
            (connection (request-connection request)))
       (method-not-implemented-error connection))))
 
-; (define bad-request-error
-;   (lambda (connection)
-;     (send-error
-;      connection
-;      (<html> (<head> (<title> "400 Bad Request"))
-;              (<body>
-;               (<h1> "Bad Request")
-;               (<p> "Your browser sent a request that this server could "
-;                    "not understand."
-;                    (<br>)))))))
 
 (define (bad-request-error connection)
   (send-error connection "400 Bad Request"))
 
+
+(define (reply-with-status-code text)
+  (let* ((request (current-request))
+         (connection (request-connection request))
+         (keep (keep-alive? request))
+         (eol "\r\n"))
+    (print port: connection
+      (list
+        (request-version request) " " text eol
+        (if keep
+          "Content-Length: 0\r\n\r\n"
+          "Connection: Close\r\n\r\n")))
+    (cond
+      ((keep-alive? request)
+       (force-output connection)
+       (serve-connection (request-server request) connection))
+      (else (close-port connection)))))
+
+
+(define not-found
+  (lambda () (reply-with-status-code "404 Not Found")))
 
 (define reply
   (lambda (thunk
@@ -840,7 +840,7 @@
         (lambda (port)
           (if (or (eq? version 'HTTP/1.0)
                   (eq? version 'HTTP/1.1))
-              (let ((message(with-output-to-u8vector
+              (let ((message (with-output-to-u8vector
                               '()
 ;;                             '(char-encoding: ISO-8859-1 eol-encoding: cr-lf)
                               thunk))
