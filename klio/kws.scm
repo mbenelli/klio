@@ -46,6 +46,9 @@
 
 (define *pages* (make-table test: string=?))
 
+(table-set! *pages* "/hello"
+  (lambda (args)
+    "Hello, word!"))
 
 (table-set! *pages* "/rcgi.bin/jvmForm"
   (lambda (args)
