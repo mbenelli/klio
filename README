@@ -15,8 +15,9 @@ Main components are:
 Klio lib is a collection of standard scheme libraries gathered from the net.
 The libraries has been modified and reorganized to fit my way of working
 with gambit.
-If you're looking for gambit's libraries probably blackhole or snow will fit
-your needs better than klio.
+If you're looking for gambit's libraries probably Blackhole or Snow will fit
+your needs better than klio (for more informations see:
+http://dynamo.iro.umontreal.ca/~gambit/wiki/index.php/Packages).
 The distinctive "features" of klio are:
 
 - vs blackhole: Klio doesn't use hygienic macros, only gambit's
@@ -51,7 +52,7 @@ from Klio's directory will build klio-lib.
 If you want to include/exclude some libs you must edit this file.
 
 
-** klio-ws
+** kliows
 
 Running:
 
@@ -81,11 +82,11 @@ using .gambcini or gambcext (see gambit's documentation).
 Be aware that header files must be included.
 
 
-** klio-ws
+** kliows
 
 Run:
 
-$ ./klio-script <port number> <server-root-directory>
+$ ./kliows <port number> <server-root-directory>
 
 If unspecified, server-root-directory will default to corrent directory,
 and port number to 8000.
