@@ -7,6 +7,7 @@
 (##namespace ("queue#"))
 (##include "~~lib/gambit#.scm")
 
+
 (define-type queue front rear
   id: 06b8a1f7-e230-4590-b427-9efdf0384356
   constructor: %queue)
@@ -21,7 +22,9 @@
   (lambda (q)
     (and (null? (queue-front q)) (null? (queue-rear q)))))
 
+
 (define empty-queue "Empty queue")
+
 
 (define snoc
   (lambda (q x)
@@ -37,6 +40,7 @@
     (if (empty? q)
         (raise empty-queue)
         (car (queue-front q)))))
+
 
 (define tail
   (lambda (q)
