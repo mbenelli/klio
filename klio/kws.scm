@@ -70,7 +70,8 @@
     (date->string
       (time-utc->date
         (make-time 'time-utc 0
-          (inexact->exact (truncate (time->seconds utc))))))))
+          (inexact->exact (truncate (time->seconds utc)))))
+      "~a, ~d ~b ~Y ~T GMT")))
 
 
 (define get-static
