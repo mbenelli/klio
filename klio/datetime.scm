@@ -43,16 +43,18 @@
 ;; MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 ;; ----------------------------------------------------------------------------
 
-(##namespace ("datetime#"))
-(##include "~~lib/gambit#.scm")
-(##include "datetime#.scm")
-
 ; Gambit
 (declare
   (standard-bindings)
   (block))
 
+(##namespace ("datetime#"))
+(##include "~~lib/gambit#.scm")
+
 (define gambit:current-time current-time)
+
+(##include "datetime#.scm")
+
 
 ;; Get the timezone offset.
 ;;
