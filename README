@@ -56,9 +56,9 @@ If you want to include/exclude some libs you must edit this file.
 
 Running:
 
-$ gsc -exe lib/kliows.scm
+$ gsc -exe klio/kliows.scm
 
-will build an executable file in "lib" directory.
+will build an executable file in "klio" directory.
 The exectubable is named "kliows" or "kliows.exe" depending on you OS.
 You can change the name of resulting executable with -o option, see gambit's
 documentation.
