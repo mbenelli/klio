@@ -1,6 +1,6 @@
 ;; kliows.scm - Klio web server launcher
 ;;
-;; Copyright (c) 2010 by Marco Benelli <mbenelli@yahoo.com>
+;; Copyright (c) 2010, 2011 by Marco Benelli <mbenelli@yahoo.com>
 ;; All Rights Reserved.
 
 (include "prelude.scm")
@@ -11,8 +11,8 @@
 (include "ssax.scm")
 (include "sxml.scm")
 (include "base64.scm")
-(include "http.scm")
 (include "datetime.scm")
+(include "http.scm")
 (include "kws.scm")
 
 (define (main args)
