@@ -1,17 +1,16 @@
 ;; Gambit port of SRFI-19: Time Data Types and Procedures.
 ;;
-;; Copyright (c) 2009, 2010 by Marco Benelli <mbenelli@yahoo.com>
+;; Copyright (c) 2009, 2010, 2011 by Marco Benelli <mbenelli@yahoo.com>
 ;; All Rights Reserved.
 ;;
 ;; Requirements:
 ;;
-;; srfi-8, srfi-9, current-time, cpu-time: all builtin in Gambit
-;; timezone.scm: interface to libc to get timezone offset in seconds
+;; srfi-8, srfi-9, ##current-time-point, cpu-time: all builtin in Gambit
 ;;
 ;; NOTES:
 ;;
-;; 1. `current-time' clash with gambit's built-in. After loading this file,
-;;    use gambit:current-time to use the gambit's one.
+;; 1. `current-time' clash with gambit's built-in, so it has been renamed in
+;;    tm:current-time
 ;; 2. actually, process-time and thread-time are the same thing
 ;;
 ;;
@@ -44,16 +43,15 @@
 ;; ----------------------------------------------------------------------------
 
 ; Gambit
+
 (declare
   (standard-bindings)
-  (block))
+  (extended-bindings)
+  (block)
+  (generic))
 
 (##namespace ("datetime#"))
 (##include "~~lib/gambit#.scm")
-
-(define gambit:current-time current-time)
-
-(##include "datetime#.scm")
 
 
 ;; Get the timezone offset.
@@ -261,10 +259,10 @@
 
 ;; Gambit.
 (define (tm:get-time-of-day)
-  (let ((t (time->seconds (gambit:current-time)))) ; Gambit
-    (values
-      (inexact->exact (truncate t))
-      (inexact->exact (truncate (* 1000 (- t (truncate t))))))))
+  (let* ((t (##current-time-point))
+         (s (truncate t))
+         (ms (* 1000 (- t s))))
+    (values (inexact->exact s) (inexact->exact ms))))
 
 
 (define (tm:current-time-utc)
@@ -308,14 +306,14 @@
 (define (tm:current-time-process)
   (tm:current-time-ms-time time-process current-process-milliseconds))
 
-(define (current-time #!optional (clock-type 'time-utc))
+(define (tm:current-time #!optional (clock-type 'time-utc))
   (cond
     ((eq? clock-type time-tai) (tm:current-time-tai))
     ((eq? clock-type time-utc) (tm:current-time-utc))
     ((eq? clock-type time-monotonic) (tm:current-time-monotonic))
     ((eq? clock-type time-thread) (tm:current-time-thread))
     ((eq? clock-type time-process) (tm:current-time-process))
-    (else (tm:time-error 'current-time 'invalid-clock-type clock-type))))
+    (else (tm:time-error 'tm:current-time 'invalid-clock-type clock-type))))
 
 ;; -- time resolution
 ;; this is the resolution of the clock in nanoseconds.
@@ -705,7 +703,7 @@
 	d)
       (tm:time->date (time-tai->time-utc time) tz-offset time-utc)))
 
-(define (time-utc->date time . tz-offset)
+(define (time-utc->date time #!optional (tz-offset 0))
   (tm:time->date time tz-offset time-utc))
 
 ;; again, time-monotonic is the same as time tai
@@ -797,8 +795,8 @@
 ;  (time-utc->date (current-time time-utc)
 ;                  (:optional tz-offset (tm:local-tz-offset))))
 
-(define (current-date #!optional (tz-offset tm:local-tz-offset))
-  (time-utc->date (current-time time-utc)
+(define (current-date #!optional (tz-offset (tm:local-tz-offset)))
+  (time-utc->date (tm:current-time time-utc)
 		  tz-offset))
 
 ;; given a 'two digit' number, find the year within 50 years +/-
@@ -909,10 +907,10 @@
   (julian-day->time-monotonic (+ jdn 4800001/2)))
 
 (define (current-julian-day)
-  (time-utc->julian-day (current-time time-utc)))
+  (time-utc->julian-day (tm:current-time time-utc)))
 
 (define (current-modified-julian-day)
-  (time-utc->modified-julian-day (current-time time-utc)))
+  (time-utc->modified-julian-day (tm:current-time time-utc)))
 
 ;; returns a string rep. of number N, of minimum LENGTH,
 ;; padded with character PAD-WITH. If PAD-WITH if #f,

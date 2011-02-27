@@ -1,6 +1,6 @@
 ;; Gambit port of SRFI-19: Time Data Types and Procedures.
 ;;
-;; Copyright (c) 2009, 2010 by Marco Benelli <mbenelli@yahoo.com>
+;; Copyright (c) 2009, 2010, 2011 by Marco Benelli <mbenelli@yahoo.com>
 ;; All Rights Reserved.
 
 
@@ -52,7 +52,7 @@
   current-process-milliseconds
   tm:current-time-thread
   tm:current-time-process
-  current-time
+  tm:current-time
   time-resolution
   tm:time-compare-check
   time=?
