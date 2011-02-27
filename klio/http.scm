@@ -853,13 +853,11 @@
                     "Content-Length: " (u8vector-length message) eol
                     "Content-Type: " mime eol
                     "Date: " (response-date) eol
-                    ;;(string-append "Connection: close" eol eol)
+                    ;; (if last-modified
+                    ;;     (string-append "Last-Modified: " last-modified eol))
                     (if to-be-closed
                         (string-append "Connection: close" eol eol)
                         eol)
-                    ;; (if last-modified
-                    ;;     (string-append "Last-Modified: " last-modified eol eol)
-                    ;;     eol)
                     ))
                 (write-subu8vector
                  message
