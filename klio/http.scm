@@ -1,4 +1,4 @@
-;; Copyright (c) 2010 by Marco Benelli <mbenelli@yahoo.com>
+;; Copyright (c) 2010, 2011 by Marco Benelli <mbenelli@yahoo.com>
 ;; All Rights Reserved.
 ;;
 ;; Original copyright notice:
@@ -10,13 +10,13 @@
 (##namespace ("http#"))
 (##include "~~lib/gambit#.scm")
 (##include "http#.scm")
+(##namespace ("datetime#" current-date date->string))
 
 (declare
   (standard-bindings)
   (extended-bindings)
   (block)
-  (not safe)
-)
+  (not safe))
 
 ;==============================================================================
 
@@ -823,6 +823,9 @@
 (define not-found
   (lambda () (reply-with-status-code "404 Not Found")))
 
+(define (response-date)
+  (date->string (current-date 0) "~a, ~d ~b ~Y ~T GMT"))
+
 (define reply
   (lambda (thunk
             #!key
@@ -849,6 +852,7 @@
                   (list version " 200 OK" eol
                     "Content-Length: " (u8vector-length message) eol
                     "Content-Type: " mime eol
+                    "Date: " (response-date) eol
                     ;;(string-append "Connection: close" eol eol)
                     (if to-be-closed
                         (string-append "Connection: close" eol eol)
