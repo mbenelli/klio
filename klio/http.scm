@@ -845,7 +845,7 @@
                   (eq? version 'HTTP/1.1))
               (let ((message (with-output-to-u8vector
                               '()
-;;                             '(char-encoding: ISO-8859-1 eol-encoding: cr-lf)
+;;                              '(char-encoding: ISO-8859-1 eol-encoding: cr-lf)
                               thunk))
                     (eol "\r\n"))
                 (print port: port
@@ -853,8 +853,8 @@
                     "Content-Length: " (u8vector-length message) eol
                     "Content-Type: " mime eol
                     "Date: " (response-date) eol
-                    ;; (if last-modified
-                    ;;     (string-append "Last-Modified: " last-modified eol))
+                    (if last-modified
+                        (string-append "Last-Modified: " last-modified eol))
                     (if to-be-closed
                         (string-append "Connection: close" eol eol)
                         eol)

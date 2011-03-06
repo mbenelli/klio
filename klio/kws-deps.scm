@@ -11,5 +11,6 @@
 (include "ssax.scm")
 (include "sxml.scm")
 (include "base64.scm")
-;(include "datetime.scm")
+(include "datetime.scm")
 ;(include "http.scm")
+

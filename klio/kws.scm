@@ -20,25 +20,14 @@
 
 
 (define (static-content path)
-  (with-exception-catcher
-    (lambda (e)
-      (if (no-such-file-or-directory-exception? e)
-          (not-found)))
-    (lambda ()
-      (call-with-input-file
-          (list
-            path: (string-append
-                    (path-strip-trailing-directory-separator (*server-root*))
-                    path))
-        (lambda (in)
-          (let loop ((b (read-u8 in)))
-            (cond
-              ((eof-object? b) (write-u8 b))
-              (else
-                (write-u8 b)
-                (loop (read-u8 in)))))
-          )))))
-
+  (call-with-input-file (list path: path)
+    (lambda (in)
+      (let loop ((b (read-u8 in)))
+        (cond
+          ((eof-object? b) '())
+          (else
+            (write-u8 b)
+            (loop (read-u8 in))))))))
 
 ;;;
 
@@ -60,13 +49,9 @@
       (cdr mimetype))
     "text/plain"))
 
+
 (define (last-modified path)
-  (let* ((filename (string-append
-                     (path-strip-trailing-directory-separator (*server-root*))
-                     path))
-         (utc (file-info-last-modification-time (file-info filename))))
-    (pp utc)
-    (pp (inexact->exact (truncate (time->seconds utc))))
+  (let ((utc (file-info-last-modification-time (file-info path))))
     (date->string
       (time-utc->date
         (make-time 'time-utc 0
@@ -74,13 +59,28 @@
       "~a, ~d ~b ~Y ~T GMT")))
 
 
+#;
 (define get-static
   (lambda (#!optional (path (uri-path (request-uri (current-request)))))
     (reply (lambda () (static-content path))
       mime: (mime path)
-      ;; last-modified: (last-modified path)
+                                        ;last-modified: (last-modified path)
       )))
 
+(define get-static
+  (lambda ()
+    (with-exception-catcher
+      (lambda (e)
+        (if (no-such-file-or-directory-exception? e)
+            (not-found)))
+      (lambda ()
+        (let ((path (string-append
+                      (path-strip-trailing-directory-separator (*server-root*))
+                      (uri-path (request-uri (current-request))))))
+          (reply (lambda () (static-content path))
+            mime: (mime path)
+            last-modified: (last-modified path)
+            ))))))
 
 
 (define (kws #!key
@@ -97,11 +97,10 @@
   (force-output (current-error-port))
 
   (parameterize ((*server-root* server-root))
-    (force-output (current-error-port))
-    (http-server-start!
-      (make-http-server
-        port-number: port-number
-        threaded?: multithread
-        GET: (or dispatcher get-static)
-        POST: (or dispatcher get-static)))))
+                     (http-server-start!
+                       (make-http-server
+                         port-number: port-number
+                         threaded?: multithread
+                         GET: (or dispatcher get-static)
+                         POST: (or dispatcher get-static)))))
 
