@@ -4,24 +4,24 @@
 ;; All Rights Reserved.
 
 (##namespace ("http-auth#"))
-(##include "~lib/gambit#.scm")
-(##namespace ("irregex#" irregex-search))
+(##include "~~lib/gambit#.scm")
+(##namespace ("irregex#" irregex irregex-search))
 
 (define *protected-paths*
   (list->table
-    '(("/private" . realm1)
-      ("/subdir/private" . realm2))))
+    '(("/private/" . realm1)
+      ("/subdir/private/" . realm2))))
 
 (define need-auth?
   (lambda (path)
-    (if (table-search (lambda (k v) (irregex-search `(beos ,k) path))
-          *protected-path*)
+    (if (table-search (lambda (k v) (irregex-search `(: bos ,k) path))
+          *protected-paths*)
         #t
         #f)))
 
 
 (define check-auth
-  (lambda (credentialso)
+  (lambda (credentials)
     ;; TODO
     (unauthorized)))
 
