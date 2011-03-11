@@ -77,7 +77,7 @@ Be aware that some "header" file (those whose name end with "#") contains
 also macro definition.
 
 For those who like "batteries-included" philosophy it should be possible to
-compile all files in a single loadable object, the load it at gambit's startup
+compile all files in a single loadable object, then load it at gambit's startup
 using .gambcini or gambcext (see gambit's documentation).
 Be aware that header files must be included.
 
