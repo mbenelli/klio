@@ -823,6 +823,9 @@
 (define not-found
   (lambda () (reply-with-status-code "404 Not Found")))
 
+(define unauthorized
+  (lambda (reply-with-status-code "401 Unauthorized")))
+
 (define (response-date)
   (date->string (current-date 0) "~a, ~d ~b ~Y ~T GMT"))
 
