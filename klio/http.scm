@@ -802,7 +802,7 @@
   (send-error connection "400 Bad Request"))
 
 
-(define (reply-with-status-code text)
+(define (reply-with-status-code text #!optional (headers '()))
   (let* ((request (current-request))
          (connection (request-connection request))
          (keep (keep-alive? request))
@@ -810,6 +810,12 @@
     (print port: connection
       (list
         (request-version request) " " text eol
+        (with-output-to-string
+          ""
+          (lambda ()
+            (for-each (lambda (x)
+                        (print (car x) ": " (cdr x) eol))
+              headers)))
         (if keep
           "Content-Length: 0\r\n\r\n"
           "Connection: Close\r\n\r\n")))
@@ -823,8 +829,14 @@
 (define not-found
   (lambda () (reply-with-status-code "404 Not Found")))
 
+;; TODO: fix inefficiency due to string-append
 (define unauthorized
-  (lambda (reply-with-status-code "401 Unauthorized")))
+  (lambda (realm)
+    (reply-with-status-code "401 Unauthorized"
+      `(("WWW-Authenticate" . ,(with-output-to-string
+                                 "Basic realm="
+                                 (lambda ()
+                                   (print #\" realm #\"))))))))
 
 (define (response-date)
   (date->string (current-date 0) "~a, ~d ~b ~Y ~T GMT"))

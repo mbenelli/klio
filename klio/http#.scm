@@ -17,6 +17,7 @@ reply-html
 current-request
 
 not-found
+unauthorized
 
 make-request
 request?

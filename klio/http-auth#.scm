@@ -3,4 +3,8 @@
 ;; Copyright (c) 2011 by Marco Benelli <mbenelli@yahoo.com>
 ;; All Rights Reserved.
 
-(##namespace ("http-auth#" with-authentication))
+(##namespace
+  ("http-auth#"
+   add-user
+   check-auth
+   with-authentication))
