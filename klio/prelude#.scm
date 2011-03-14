@@ -27,6 +27,7 @@
   char-tab
   char-newline
   parser-error
+  split
   memoize))
 
 

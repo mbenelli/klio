@@ -82,6 +82,16 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Gambit specific
 
+;;; strings
+
+(define (split separator)
+  (lambda (str)
+    (call-with-input-string
+      str
+      (lambda (s)
+        (read-all s (lambda (s) (read-line s separator)))))))
+
+
 ;;; Memoize functions calls
 
 (define (memoize f)
