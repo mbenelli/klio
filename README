@@ -33,7 +33,7 @@ It's main goals are:
 
 - portability
 - reliable ad efficient implementation of HTTP 1.1
-- integraton with ssax-sxml for dinamic pages
+- integraton with ssax-sxml for dynamic pages
 - good performance for small sites (few users) with heavy load (pages refreshed
   periodically)
 
