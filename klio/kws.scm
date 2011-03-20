@@ -20,14 +20,10 @@
 
 
 (define (static-content path)
-  (call-with-input-file (list path: path)
-    (lambda (in)
-      (let loop ((b (read-u8 in)))
-        (cond
-          ((eof-object? b) '())
-          (else
-            (write-u8 b)
-            (loop (read-u8 in))))))))
+  (let* ((p (open-input-file path))
+         (f (read-line p #f)))
+    (close-input-port p)
+    (display f)))
 
 ;;;
 
