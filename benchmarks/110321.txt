@@ -1,0 +1,112 @@
+Processor: Pentium 2.4 GHz Intel Core 2 Duo
+Memory:    2 GB 800 Mhz DDR2 SDRAM
+Os:        Mac OS X 10.5.8
+
+index.html (4K)
+----------------------------------------------------------------------------------
+
+KLIO (32288990a21ce2f55f2d0d8c94944765f87c4e80)
+
+siege --time=20S --concurrent=200 --delay=1 localhost:8000/index.html
+
+Transactions:		        7097 hits
+Availability:		      100.00 %
+Elapsed time:		       19.39 secs
+Data transferred:	        2.68 MB
+Response time:		        0.00 secs
+Transaction rate:	      366.01 trans/sec
+Throughput:		        0.14 MB/sec
+Concurrency:		        1.26
+Successful transactions:        7097
+Failed transactions:	           0
+Longest transaction:	        0.05
+Shortest transaction:	        0.00
+
+APACHE 2.2.14
+
+siege --time=20S --concurrent=200 --delay=1 localhost/~marco/klio/index.html
+
+Transactions:		        7808 hits
+Availability:		      100.00 %
+Elapsed time:		       19.94 secs
+Data transferred:	        2.95 MB
+Response time:		        0.00 secs
+Transaction rate:	      391.57 trans/sec
+Throughput:		        0.15 MB/sec
+Concurrency:		        0.24
+Successful transactions:        7808
+Failed transactions:	           0
+Longest transaction:	        0.01
+Shortest transaction:	        0.00
+
+LIGHTTPD 1.4.28
+
+siege --time=20S --concurrent=200 --delay=1 localhost:3000/index.html
+
+Transactions:		        7669 hits
+Availability:		      100.00 %
+Elapsed time:		       19.25 secs
+Data transferred:	        2.90 MB
+Response time:		        0.00 secs
+Transaction rate:	      398.39 trans/sec
+Throughput:		        0.15 MB/sec
+Concurrency:		        0.44
+Successful transactions:        7669
+Failed transactions:	           0
+Longest transaction:	        0.02
+Shortest transaction:	        0.00
+
+----------------------------------------------------------------------------------
+list.html (136K)
+
+KLIO (32288990a21ce2f55f2d0d8c94944765f87c4e80)
+
+siege --time=20S --concurrent=200 --delay=1 localhost:8000/doc/lists.html
+
+Transactions:		        2080 hits
+Availability:		      100.00 %
+Elapsed time:		       19.98 secs
+Data transferred:	      271.96 MB
+Response time:		        1.33 secs
+Transaction rate:	      104.10 trans/sec
+Throughput:		       13.61 MB/sec
+Concurrency:		      138.00
+Successful transactions:        2080
+Failed transactions:	           0
+Longest transaction:	        1.50
+Shortest transaction:	        0.02
+
+APACHE 2.2.14
+
+siege --time=20S --concurrent=200 --delay=1 localhost/~marco/klio/doc/lists.html
+
+Transactions:		        7190 hits
+Availability:		      100.00 %
+Elapsed time:		       19.25 secs
+Data transferred:	      940.09 MB
+Response time:		        0.00 secs
+Transaction rate:	      373.51 trans/sec
+Throughput:		       48.84 MB/sec
+Concurrency:		        0.53
+Successful transactions:        7190
+Failed transactions:	           0
+Longest transaction:	        0.03
+Shortest transaction:	        0.00
+
+LIGHTTPD 1.4.28
+
+siege --time=20S --concurrent=200 --delay=1 localhost:3000/doc/lists.html
+
+Transactions:		        7259 hits
+Availability:		      100.00 %
+Elapsed time:		       19.92 secs
+Data transferred:	      949.11 MB
+Response time:		        0.00 secs
+Transaction rate:	      364.41 trans/sec
+Throughput:		       47.65 MB/sec
+Concurrency:		        1.18
+Successful transactions:        7259
+Failed transactions:	           0
+Longest transaction:	        0.07
+Shortest transaction:	        0.00
+
