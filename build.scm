@@ -22,6 +22,8 @@
     input-parse
     ssax
     sxml
+
+    kws
     ))
 
 (parameterize ((current-directory dir))
