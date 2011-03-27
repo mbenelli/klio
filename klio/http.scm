@@ -769,15 +769,15 @@
   (lambda (hs server-port)
     (let loop ()
       (let ((connection
-             (read server-port)))
+              (read server-port)))
         (if (server-threaded? hs)
             (let ((dummy-port (open-dummy)))
               (parameterize ((current-input-port dummy-port)
                              (current-output-port dummy-port))
                 (thread-start!
-                 (make-thread
-                  (lambda ()
-                    (serve-connection hs connection))))))
+                  (make-thread
+                    (lambda ()
+                      (serve-connection hs connection))))))
             (serve-connection hs connection)))
       (loop))))
 
@@ -829,7 +829,6 @@
 (define not-found
   (lambda () (reply-with-status-code "404 Not Found")))
 
-;; TODO: fix inefficiency due to string-append
 (define unauthorized
   (lambda (realm)
     (reply-with-status-code "401 Unauthorized"
@@ -837,6 +836,15 @@
                                  "Basic realm="
                                  (lambda ()
                                    (print #\" realm #\"))))))))
+
+(define internal-error
+  (lambda () (reply-with-status-code "500 Internal Error")))
+
+(define not-implemented
+  (lambda () (reply-with-status-code "501 Not Implemented")))
+
+(define service-unavaible
+  (lambda () (reply-with-status-code "503 Service Unavaible")))
 
 (define (response-date)
   (date->string (current-date 0) "~a, ~d ~b ~Y ~T GMT"))

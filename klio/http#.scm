@@ -19,6 +19,10 @@ current-request
 not-found
 unauthorized
 
+internal-error
+not-implemented
+service-unavaible
+
 make-request
 request?
 request-attributes
