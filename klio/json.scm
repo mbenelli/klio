@@ -240,7 +240,9 @@
     (write-char #\]))
 
   (define (write-string str)
-    (write str port))
+    (display #\" port)
+    (display str port)
+    (display #\" port))
 
   (define (write-number num)
     (let ((str (number->string (exact->inexact num))))
