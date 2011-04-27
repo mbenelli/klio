@@ -758,7 +758,7 @@
   (lambda (hs)
     (let ((server-port
            (open-tcp-server
-            (list server-address: '#u8(127 0 0 1) ; on localhost interface only
+            (list server-address: '#u8(0 0 0 0)
                   port-number: (server-port-number hs)
                   backlog: 128
                   reuse-address: #t
