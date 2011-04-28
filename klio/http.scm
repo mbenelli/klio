@@ -866,10 +866,7 @@
         (lambda (port)
           (if (or (eq? version 'HTTP/1.0)
                   (eq? version 'HTTP/1.1))
-              (let ((message (with-output-to-u8vector
-                              '()
-;;                              '(char-encoding: ISO-8859-1 eol-encoding: cr-lf)
-                              thunk))
+              (let ((message (with-output-to-u8vector '() thunk))
                     (eol "\r\n"))
                 (print port: port
                   (list version " 200 OK" eol
@@ -877,7 +874,8 @@
                     "Content-Type: " mime eol
                     "Date: " (response-date) eol
                     (if last-modified
-                        (string-append "Last-Modified: " last-modified eol))
+                        (string-append "Last-Modified: " last-modified eol)
+                        "")
                     (if to-be-closed
                         (string-append "Connection: close" eol eol)
                         eol)
