@@ -850,7 +850,7 @@
   (date->string (current-date 0) "~a, ~d ~b ~Y ~T GMT"))
 
 (define reply
-  (lambda (thunk
+  (lambda (thunk #!optional (attributes '())
             #!key
             (mime "text/html; charset=ISO-8859-1")
             (last-modified #f))
@@ -870,16 +870,16 @@
                     (eol "\r\n"))
                 (print port: port
                   (list version " 200 OK" eol
+		    "Server: Klio Web Server" eol
                     "Content-Length: " (u8vector-length message) eol
-                    "Content-Type: " mime eol
                     "Date: " (response-date) eol
-                    (if last-modified
-                        (string-append "Last-Modified: " last-modified eol)
-                        "")
                     (if to-be-closed
-                        (string-append "Connection: close" eol eol)
-                        eol)
-                    ))
+                        (string-append "Connection: close" eol)
+                        "")))
+		(for-each
+		  (lambda (x) (print port: port (car x) ": " (cdr x) eol))
+		  attributes)
+		(print port: port eol)
                 (write-subu8vector
                  message
                  0

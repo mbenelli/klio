@@ -73,9 +73,11 @@
         (let ((path (string-append
                       (path-strip-trailing-directory-separator (*server-root*))
                       (uri-path (request-uri (current-request))))))
+	  (pp path)
+	  (pp (current-request))
           (reply (lambda () (static-content path))
-            mime: (mime path)
-            last-modified: (last-modified path)
+	    `(("Content-Type" . ,(mime path))
+	      ("Last-Modified" . ,(last-modified path)))
             ))))))
 
 
