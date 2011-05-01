@@ -5,8 +5,8 @@
 ;
 ; Non standard dependencies: ##current-time-point
 
-;(##namespace ("sessions#"))
-;(##include "~~lib/gambit#.scm")
+(##namespace ("sessions#"))
+(##include "~~lib/gambit#.scm")
 (##include "prelude#.scm")
 (##namespace ("lists#" member remove!))
 
@@ -76,6 +76,12 @@
     (else #f)))
 
 
+(define (new-session user passwd)
+  (cond
+    ((make-session user passwd) => (lambda (x) (session-id x)))
+    (else #f)))
+
+
 (define (check-sessions!)
   (set! current-sessions (remove! expired? current-sessions)))
 
@@ -94,5 +100,5 @@
   (thread-start! check-sessions-thread))
 
 (define (stop-sessions-manager)
-  (thread-terminate! check-session-thread))
+  (thread-terminate! check-sessions-thread))
 

@@ -7,6 +7,7 @@
 (##namespace
  ("sessions#"
   make-session
+  new-session
   valid-session
   start-sessions-manager
   stop-sessions-manager))
