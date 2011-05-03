@@ -64,6 +64,9 @@
   (and (string=? user "foo") (string=? passwd "bar")))
 
 
+; TODO: make-session and new-session should probably be removed.
+
+
 (define (make-session user passwd)
   (cond
     ((authorized? user passwd) (let ((s (%make-session
@@ -84,8 +87,25 @@
     (else #f)))
 
 
+(define (make-session-builder authorized?)
+  (lambda (user passwd)
+    (cond
+      ((authorized? user passwd) (let ((s (%make-session
+                                            (random-integer 1000000)
+                                            user
+                                            (now)
+                                            (now))))
+                                   (mutex-lock! sessions-mutex #f #f)
+                                   (push! s current-sessions)
+                                   (mutex-unlock! sessions-mutex)
+                                   (session-id s)))
+      (else #f))))
+
+
+
 (define (check-sessions!)
   (set! current-sessions (remove! expired? current-sessions)))
+
 
 (define check-sessions-thread
   (make-thread
@@ -98,8 +118,10 @@
           (mutex-unlock! sessions-mutex)
           (loop (+ x (session-timeout))))))))
 
+
 (define (start-sessions-manager)
   (thread-start! check-sessions-thread))
+
 
 (define (stop-sessions-manager)
   (thread-terminate! check-sessions-thread))
