@@ -52,6 +52,9 @@
     (lambda (id session) (eq? id (session-id session)))))
 
 
+; TODO: actually unused.  Maybe is not a good idea.
+; Could be better let an already logged user to start a new session.
+;
 (define already-logged-in
   (session-by-key
     (lambda (user session) (string=? user (session-user session)))))
@@ -63,7 +66,6 @@
 
 (define (make-session user passwd)
   (cond
-    ((already-logged-in user) => values)
     ((authorized? user passwd) (let ((s (%make-session
                                           (random-integer 1000000)
                                           user
