@@ -102,6 +102,12 @@
       (else #f))))
 
 
+(define (close-current-session sid)
+  (mutex-lock! sessions-mutex #f #f)
+  (set! current-sessions
+    (remove! (lambda (x) (eq? sid (session-id x))) current-sessions))
+  (mutex-unlock! sessions-mutex)
+
 
 (define (check-sessions!)
   (set! current-sessions (remove! expired? current-sessions)))

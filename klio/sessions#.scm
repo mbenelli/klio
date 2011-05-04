@@ -8,7 +8,8 @@
  ("sessions#"
   make-session
   new-session
-  make-session-builder  
+  make-session-builder
+  close-current-session
   valid-session
   start-sessions-manager
   stop-sessions-manager))
