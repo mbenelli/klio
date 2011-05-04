@@ -826,6 +826,10 @@
       (else (close-port connection)))))
 
 
+(define see-other
+  (lambda (attrs)
+    (reply-with-status-code "See Other" attrs)))
+
 (define not-found
   (lambda () (reply-with-status-code "404 Not Found")))
 
