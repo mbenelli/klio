@@ -828,7 +828,7 @@
 
 (define see-other
   (lambda (attrs)
-    (reply-with-status-code "See Other" attrs)))
+    (reply-with-status-code "303 See Other" attrs)))
 
 (define not-found
   (lambda () (reply-with-status-code "404 Not Found")))
