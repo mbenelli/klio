@@ -13,7 +13,7 @@
 
 (define now ##current-time-point)
 
-(define session-timeout (make-parameter 10))
+(define session-timeout (make-parameter 1800))
 
 (define current-sessions '())
 
