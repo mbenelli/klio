@@ -1,0 +1,7 @@
+#!/usr/bin/perl
+use CGI qw/:standard/;
+print header,
+  start_html('hello world!'),
+  h1('hello world!'),
+  end_html;
+
