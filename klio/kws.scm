@@ -65,8 +65,9 @@
         (let ((path (string-append
                       (path-strip-trailing-directory-separator (*server-root*))
                       (uri-path (request-uri (current-request))))))
-          (reply (lambda () (static-content path))
+          (reply-unbuffered (lambda () (static-content path))
 	    `(("Content-Type" . ,(mime path))
+              ("Content-Length" . ,(file-info-size (file-info path)))
 	      ("Last-Modified" . ,(last-modified path)))
             ))))))
 
