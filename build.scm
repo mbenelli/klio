@@ -14,6 +14,11 @@
     datetime
     format
     vectors
+    shift-reset
+
+    queue
+    buffmap
+    logger
 
     base64
     http
@@ -24,6 +29,9 @@
     sxml
 
     kws
+    http-auth
+    sessions
+    cgi
     ))
 
 (parameterize ((current-directory dir))
