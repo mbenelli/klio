@@ -1,9 +1,16 @@
 AUTHORS                                                         -*- outline -*-
 
-A list of author of collected code.
-See each module for licenging information.
-I have modified some stuff around, so I'm the one to blame if something
-doesn't work. 
+A list of authors of collected code.
+See each module for copyrights and original comments.
+Most of the code has been heavily modified, so I'm the one to blame if
+something doesn't work. 
+
+
+* Marc Feeley
+
+base64
+http
+
 
 * Oleg Kyselyov
 
@@ -13,6 +20,7 @@ input-parse
 ssax
 sxml
 shift-reset
+
 
 * Alex Shinn
 
