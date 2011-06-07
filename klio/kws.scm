@@ -55,14 +55,6 @@
       "~a, ~d ~b ~Y ~T GMT")))
 
 
-#;
-(define get-static
-  (lambda (#!optional (path (uri-path (request-uri (current-request)))))
-    (reply (lambda () (static-content path))
-      mime: (mime path)
-                                        ;last-modified: (last-modified path)
-      )))
-
 (define get-static
   (lambda ()
     (with-exception-catcher
@@ -73,10 +65,26 @@
         (let ((path (string-append
                       (path-strip-trailing-directory-separator (*server-root*))
                       (uri-path (request-uri (current-request))))))
-          (reply (lambda () (static-content path))
+          (reply-unbuffered (lambda () (static-content path))
 	    `(("Content-Type" . ,(mime path))
+              ("Content-Length" . ,(file-info-size (file-info path)))
 	      ("Last-Modified" . ,(last-modified path)))
             ))))))
+
+(define get-file
+  (lambda (path attributes)
+    (with-exception-catcher
+      (lambda (e)
+	(if (no-such-file-or-directory-exception? e)
+	    (not-found)))
+      (lambda ()
+	(let ((p (string-append
+	           (path-strip-trailing-directory-separator (*server-root*))
+		   path)))
+	  (reply (lambda () (static-content p))
+                 (append `(("Content-Type" . ,(mime p))
+                           ("Last-Modified" . ,(last-modified p)))
+                         attributes)))))))
 
 
 (define (kws #!key

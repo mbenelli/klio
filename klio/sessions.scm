@@ -5,15 +5,15 @@
 ;
 ; Non standard dependencies: ##current-time-point
 
-;(##namespace ("sessions#"))
-;(##include "~~lib/gambit#.scm")
+(##namespace ("sessions#"))
+(##include "~~lib/gambit#.scm")
 (##include "prelude#.scm")
 (##namespace ("lists#" member remove!))
 
 
 (define now ##current-time-point)
 
-(define session-timeout (make-parameter 10))
+(define session-timeout (make-parameter 1800))
 
 (define current-sessions '())
 
@@ -52,6 +52,9 @@
     (lambda (id session) (eq? id (session-id session)))))
 
 
+; TODO: actually unused.  Maybe is not a good idea.
+; Could be better let an already logged user to start a new session.
+;
 (define already-logged-in
   (session-by-key
     (lambda (user session) (string=? user (session-user session)))))
@@ -61,9 +64,11 @@
   (and (string=? user "foo") (string=? passwd "bar")))
 
 
+; TODO: make-session and new-session should probably be removed.
+
+
 (define (make-session user passwd)
   (cond
-    ((already-logged-in user) => values)
     ((authorized? user passwd) (let ((s (%make-session
                                           (random-integer 1000000)
                                           user
@@ -76,8 +81,37 @@
     (else #f)))
 
 
+(define (new-session user passwd)
+  (cond
+    ((make-session user passwd) => (lambda (x) (session-id x)))
+    (else #f)))
+
+
+(define (make-session-builder authorized?)
+  (lambda (user passwd)
+    (cond
+      ((authorized? user passwd) (let ((s (%make-session
+                                            (random-integer 1000000)
+                                            user
+                                            (now)
+                                            (now))))
+                                   (mutex-lock! sessions-mutex #f #f)
+                                   (push! s current-sessions)
+                                   (mutex-unlock! sessions-mutex)
+                                   (session-id s)))
+      (else #f))))
+
+
+(define (close-current-session sid)
+  (mutex-lock! sessions-mutex #f #f)
+  (set! current-sessions
+    (remove! (lambda (x) (eq? sid (session-id x))) current-sessions))
+  (mutex-unlock! sessions-mutex))
+
+
 (define (check-sessions!)
   (set! current-sessions (remove! expired? current-sessions)))
+
 
 (define check-sessions-thread
   (make-thread
@@ -90,9 +124,11 @@
           (mutex-unlock! sessions-mutex)
           (loop (+ x (session-timeout))))))))
 
+
 (define (start-sessions-manager)
   (thread-start! check-sessions-thread))
 
+
 (define (stop-sessions-manager)
-  (thread-terminate! check-session-thread))
+  (thread-terminate! check-sessions-thread))
 

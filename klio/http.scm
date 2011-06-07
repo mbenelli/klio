@@ -826,6 +826,10 @@
       (else (close-port connection)))))
 
 
+(define see-other
+  (lambda (attrs)
+    (reply-with-status-code "303 See Other" attrs)))
+
 (define not-found
   (lambda () (reply-with-status-code "404 Not Found")))
 
@@ -848,6 +852,29 @@
 
 (define (response-date)
   (date->string (current-date 0) "~a, ~d ~b ~Y ~T GMT"))
+
+(define (reply-unbuffered thunk #!optional (attributes '()))
+  (let* ((request (current-request))
+         (connection (request-connection request))
+         (version (request-version request))
+         (to-be-closed (not (keep-alive? request)))
+         (eol "\r\n"))
+    (with-output-to-port connection
+      (lambda ()
+        (print
+          version " 200 OK" eol
+          "Server: Klio Web Server" eol
+          "Date: " (response-date) eol
+          (if to-be-closed "Connection: close\r\n" ""))
+        (for-each
+          (lambda (x) (print (car x) ": " (cdr x) eol))
+          attributes)
+        (print eol)
+        (thunk)))
+    (cond
+      (to-be-closed (close-port connection))
+      (else (force-output connection)
+            (serve-connection (request-server request) connection)))))
 
 (define reply
   (lambda (thunk #!optional (attributes '())
