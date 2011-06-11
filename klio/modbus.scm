@@ -1,12 +1,12 @@
-;;; modbus.scm - Modbus protocol implementation.
-;;;
-;;; Copyright (c) 2011 by Marco Benelli <mbenelli@yahoo.com>
-;;; All Right Reserved.
-;;;
-;;; Author: Marco Benelli <mbenelli@yahoo.com>
-;;;
+;; modbus.scm - Modbus protocol implementation.
+;;
+;; Copyright (c) 2011 by Marco Benelli <mbenelli@yahoo.com>
+;; All Right Reserved.
+;;
+;; Author: Marco Benelli <mbenelli@yahoo.com>
+;;
 
-;;; Actually only modbus-tcp is implemented.
+;; Actually only modbus-tcp is implemented.
 
 (##namespace ("modbus#"))
 (##include "~~lib/gambit#.scm")
@@ -107,10 +107,6 @@
       (else (subu8vector *recv-buffer* 9 len)))))
 
 ; High level interface
-
-;(define (read-inputs! ui n offset #!optional (port (current-input-port)))
-;  (send-read-request! ui n offset port)
-;  (recv-read-response! ui port))
 
 
 (define (read-coils! ui n offset #!optional (port (current-input-port)))
