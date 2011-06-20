@@ -49,7 +49,7 @@
 ;;  2       Header Length            16d
 ;;  3       ID Op Code               1
 ;;  4       Op Code Length           3
-;;  5       Op Code Lenght           3
+;;  5       Op Code
 ;;  6       ORG Field                3
 ;;  7       Org Field Lenght         8
 ;;  8       ORG ID
@@ -62,7 +62,7 @@
 ;; 15       Empty Field Size         2
 ;; 16       Data up to 64k bytes
 
-(define request-header
+(define (make-request-header opcode org-id db offset len)
   (u8vector
     (char->integer \#S)
     (char->integer \#5)
@@ -70,18 +70,16 @@
     1
     3
     3
-    3
+    opcode
     8
-    0
-    0
-    0
-    0
-    0
-    0
-    255
-    2))
+    org-id
+    db
+    (extract-bit-field 8 8 offset)
+    (extract-bit-field 8 0 offset)
+    (extract-bit-field 8 8 len)
+    (extract-bit-field 8 0 len)))
 
-(define make-request)
+
 
 ;; Response header
 ;;
@@ -105,5 +103,28 @@
 ;; 15   |
 
 
-(define (write-db db offset length data #!optional (port (current-output-port)))
-  )
+(define (write-db db offset len data #!optional (p (current-output-port)))
+  (let ((req-header (make-request-header OPCODE-WRITE DB db offset len))
+        (res-header (make-u8vector 16)))
+    (with-output-to-port p
+      (lambda ()
+        (write-subu8vector req-header 0 (u8vector-length req-header))
+        (write-subu8vector data 0 (u8vector-length data))))
+    (force-output p)
+    (with-input-from-port p
+      (lambda ()
+        (read-subu8vector res-header 0 (u8vector-length res-header))))))
+
+(define (fetch-db db offset len #!optional (p (current-output-port)))
+  (let ((req-header (make-request-header OPCODE-FETCH DB db offset len))
+        (res-header (make-u8vector 16))
+        (res (make-u8vector len)))
+    (with-output-to-port p
+      (lambda ()
+        (write-subu8vector req-header 0 (u8vector-length req-header))))
+    (force-output p)
+    (with-input-from-port p
+      (lambda ()
+        (read-sub8vector res-header 0 (u8vector-length res-header))
+        (read-sub8vector res 0 len)))
+    res))
