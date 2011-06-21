@@ -64,8 +64,8 @@
 
 (define (make-request-header opcode org-id db offset len)
   (u8vector
-    (char->integer \#S)
-    (char->integer \#5)
+    (char->integer #\S)
+    (char->integer #\5)
     16
     1
     3
