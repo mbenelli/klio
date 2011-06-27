@@ -9,5 +9,29 @@
 
 (##namespace
   ("fetchwrite#"
+
+   DB
+   M
+   I
+   Q
+   PI-PQ
+   C
+   T
+
+   OPCODE-WRITE
+   OPCODE-FETCH
+
+   OK
+   ERROR
+   ERROR-INVALID-PARAM
+   ERROR-CONNECTION
+   ERROR-TIMEOUT
+   ERROR-COMUNICATION
+   ERROR-BUFFER
+   ERROR-SEND
+   ERROR-RECV
+
+   make-request-header
+   make-response-header
    fetch-db
    write-db))
