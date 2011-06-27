@@ -102,6 +102,25 @@
 ;; 14   |
 ;; 15   |
 
+(define (make-response-header errno)
+  (u8vector
+    (char->integer \#S)
+    (char->integer \#5)
+    16
+    1
+    3
+    4
+    #x0f
+    3
+    errno
+    #xff
+    7
+    0
+    0
+    0
+    0
+    0))
+
 
 (define (write-db db offset len data #!optional (p (current-output-port)))
   (let ((req-header (make-request-header OPCODE-WRITE DB db offset len))
