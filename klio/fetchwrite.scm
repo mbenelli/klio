@@ -8,6 +8,7 @@
 ;; The fecth-write protocol is used to communicate with Siemens S5/S7 plcs.
 
 (##namespace ("fetchwrite#"))
+(##include "~~lib/gambit#.scm")
 
 
 ;; ORG types
@@ -69,15 +70,17 @@
     16
     1
     3
-    3
     opcode
+    3
     8
     org-id
     db
     (extract-bit-field 8 8 offset)
     (extract-bit-field 8 0 offset)
     (extract-bit-field 8 8 len)
-    (extract-bit-field 8 0 len)))
+    (extract-bit-field 8 0 len)
+    #xff
+    2))
 
 
 
@@ -85,8 +88,8 @@
 ;;
 ;; Byte#    Field Name               Value
 ;;
-;;  0       System ID                \#S
-;;  1       System ID                \#5
+;;  0       System ID                #\S
+;;  1       System ID                #\5
 ;;  2       Header Length            16d
 ;;  3       ID OP Code               1
 ;;  4       Op Code Length           3
@@ -104,8 +107,8 @@
 
 (define (make-response-header errno)
   (u8vector
-    (char->integer \#S)
-    (char->integer \#5)
+    (char->integer #\S)
+    (char->integer #\5)
     16
     1
     3
@@ -125,25 +128,17 @@
 (define (write-db db offset len data #!optional (p (current-output-port)))
   (let ((req-header (make-request-header OPCODE-WRITE DB db offset len))
         (res-header (make-u8vector 16)))
-    (with-output-to-port p
-      (lambda ()
-        (write-subu8vector req-header 0 (u8vector-length req-header))
-        (write-subu8vector data 0 (u8vector-length data))))
+    (write-subu8vector req-header 0 (u8vector-length req-header) p)
+    (write-subu8vector data 0 (u8vector-length data) p)
     (force-output p)
-    (with-input-from-port p
-      (lambda ()
-        (read-subu8vector res-header 0 (u8vector-length res-header))))))
+    (read-subu8vector res-header 0 (u8vector-length res-header) p)))
 
 (define (fetch-db db offset len #!optional (p (current-output-port)))
   (let ((req-header (make-request-header OPCODE-FETCH DB db offset len))
         (res-header (make-u8vector 16))
         (res (make-u8vector len)))
-    (with-output-to-port p
-      (lambda ()
-        (write-subu8vector req-header 0 (u8vector-length req-header))))
+    (write-subu8vector req-header 0 (u8vector-length req-header) p)
     (force-output p)
-    (with-input-from-port p
-      (lambda ()
-        (read-sub8vector res-header 0 (u8vector-length res-header))
-        (read-sub8vector res 0 len)))
+    (read-subu8vector res-header 0 (u8vector-length res-header) p)
+    (read-subu8vector res 0 len p)
     res))
