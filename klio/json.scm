@@ -217,7 +217,7 @@
     (write-char #\{ port)
     (let ((first? #t))
       (table-for-each (lambda (key value)
-                        (if (not (string? key))
+                        (if (not (or (string? key) (symbol? key)))
                             (raise 'invalid-json-object))
                         (if (not first?)
                             (display ", " port))
@@ -259,6 +259,8 @@
            (display "false" port))
           ((eq? value #t)
            (display "true" port))
+          ((symbol? value)
+           (display value port))
           ((json-null? value)
            (display "null" port))
           (else
