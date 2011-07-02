@@ -5,16 +5,39 @@
   <head>
     <title>Klio</title>
     <style>
-      #logo {
-      float: left;
-      }
-      #content {
-      width: 500px;
+      #frame {
+      width: 700px;
+      height: 100%;
       margin-left: auto;
       margin-right: auto;
       }
+      /*
+      #frame > * {
+      width: 700px;
+      margin-left: auto;
+      margin-right: auto;
+      }
+      */
+      #header {
+      position: absolute;
+      top: 2px;
+      height: 128px;
+      }
+      #logo {
+      float: left;
+      }
+      #title {
+      float:left;
+      }
+      #contents {
+      position: absolute;
+      width: 700px;
+      overflow: auto;
+      top: 128px;
+      bottom: 32px;
+      }
 
-      #cc-license {
+      #footer {
       position: absolute;
       bottom: 2px;
       font-size: 0.7em;
@@ -32,35 +55,43 @@
   </head>
 
   <body>
-    <div id="logo">
-      <img src="klio-logo.png">
-    </div>
-    <div id="content">
-      <h1>Klio</h1>
-      <p>Tools for Gambit-C</p>
-      <a href="https://github.com/mbenelli/klio">
-	https://github.com/mbenelli/klio
-      </a>
-    </div>
+    <div id="frame">
 
-
-    <div id="cc-license">
-      <div id="license-img">
-	<img alt="Creative Commons License" style="border-width:0"
-	src="http://i.creativecommons.org/l/by-nc-nd/3.0/80x15.png" />
+      <div id="header">
+	<div id="logo">
+	  <img src="klio-logo.png">
+	</div>
+	<div id="title">
+	  <h1>Klio</h1>
+	</div>
       </div>
-      <div id="license-text">
-	Klio logo by
-	<a xmlns:cc="http://creativecommons.org/ns#"
-	  href="http://mbenelli.github.com/klio" property="cc:attributionName"
-	  rel="cc:attributionURL">Marco Benelli</a>
-	is licensed under a
-	<a rel="license"
-	  href="http://creativecommons.org/licenses/by-nc-nd/3.0/">
-	  Creative Commons Attribution-NonCommercial-NoDerivs 3.0 Unported
-	  License</a>.
-      </div>
-    </div>
 
+      <div id="contents">
+	<p>Tools for Gambit-C</p>
+	<a href="https://github.com/mbenelli/klio">
+	  https://github.com/mbenelli/klio
+	</a>
+      </div>
+
+
+      <div id="footer">
+	<div id="license-img">
+	  <img alt="Creative Commons License" style="border-width:0"
+	  src="http://i.creativecommons.org/l/by-nc-nd/3.0/80x15.png" />
+	</div>
+	<div id="license-text">
+	  Klio logo by
+	  <a xmlns:cc="http://creativecommons.org/ns#"
+	    href="http://mbenelli.github.com/klio" property="cc:attributionName"
+	    rel="cc:attributionURL">Marco Benelli</a>
+	  is licensed under a
+	  <a rel="license"
+	    href="http://creativecommons.org/licenses/by-nc-nd/3.0/">
+	    Creative Commons Attribution-NonCommercial-NoDerivs 3.0 Unported
+	    License</a>.
+	</div>
+      </div>
+
+    </div>
   </body>
 </html>
