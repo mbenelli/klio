@@ -3,16 +3,24 @@
 ; Copyright (c) 2011 by Benelli Marco <mbenelli@yahoo.com>.
 ; All Right Reserved.
 ;
-; These utilities builds function to read and write variables.
+; These utilities builds functionis to read and write variables.
 ; A typical use is in conjunction with a binary communication protocol (ie:
 ; modbus), the variables are read from a buffer and written using a function
 ; provided by client.
 ;
-; TODO: This is actually a work in progress and need sostantial testing.
+; TODO: This is actually a work in progress and need substantial testing.
 ; 
 
 (##namespace ("buffmap#"))
 (##include "~~lib/gambit#.scm")
+(##namespace ("floats#" read-f32 read-f64))
+
+
+                                        ; TODO: following functions are for
+					; testing purpose.
+					; This testing code is out of date,
+					; because it use alists, superseeded
+					; by list of variables.
 
 ; Initialize an u8vector with random integers between 0 and 255
 
@@ -28,6 +36,7 @@
 (define (choose . choices)
   (let ((n (length choices)))
     (list-ref choices (random-integer n))))
+
 
 
 ; Return an alist of N variable names and offsets representing addresses of
@@ -56,28 +65,65 @@
                          datamap)))))))
 
 
-; Build an hash table of accessor to BUFFER with mapping defined by DATAMAP.
+                                       ; Real code stars here
+
+(define types '(bit byte f32 f64))
+
+(define-type
+  var
+  id: F32C84CD-66FA-4E85-920E-13C4560DDA55
+  constructor: %make-var
+  name
+  type
+  offset
+  bit-index)
+
+(define (make-var name type offset #!optional (bit-index #f))
+  (cond
+    ((and (eq? type 'bit)
+	  (integer? bit-index)
+	  (and (>= bit-index 0)
+	       (< bit-index 8))) (%make-var name type offset bit-index))
+    ((not (memq type types)) (raise "Unknow type"))
+    (else (%make-var name type offset #f))))
+
+; Build an hash table of accessor to BUFFER with mapping defined by DATAMAP,
+; where DATAMAP is a list of variables as defined by make-var.
+;
 ; Usage: ((table-ref accessors 'v0))
 
 (define (build-accessors buffer datamap)
   (let ((accessors (make-table)))
     (for-each
      (lambda (x)
-       (let ((name (car x))
-             (type (cadr x))
-             (offset (caddr x)))
-         (if (eq? type 'byte)
-             (table-set! accessors name
-                         (lambda ()
-                           (u8vector-ref buffer (quotient offset 8))))
-             (let ((index (quotient offset 8))
-                   (bit (remainder offset 8)))
-               (table-set! accessors name
-                           (lambda ()
-                             (extract-bit-field
-                               1
-                               bit
-                               (u8vector-ref buffer index))))))))
+       (let ((name (var-name x))
+             (type (var-type x))
+             (offset (var-offset x)))
+	 (cond
+	   ((eq? type 'byte)
+	    (table-set! accessor name
+			(lambda ()
+			  (u8vector-ref buffer offset))))
+	   ((eq? type 'bit)
+	    (table-set! accessor name
+			(lambda ()
+			  (extract-bit-field
+			    1
+			    (var-bit-index x)
+			    (u8vector-ref buffer offset)))))
+	   ((eq? type 'f32)
+	    (table-set! accessor name
+			(lambda ()
+			  (with-input-from-u8vector
+			    (subu8vector buffer offeset 4)
+			    (lambda () (read-f32 (current-input-port)))))))
+	   ((eq? type 'f64)
+	    (table-set! accessor name
+			(lambda ()
+			  (with-input-from-u8vector
+			    (subu8vector buffer offset 8)
+			    (lambda () (read-f64 (current-input-port)))))))
+	   (else (raise "Unknown type")))))
      datamap)
     (lambda (k) ((table-ref accessors k)))))
 
