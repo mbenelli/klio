@@ -16,59 +16,6 @@
 (##namespace ("floats#" read-f32 read-f64))
 
 
-                                        ; TODO: following functions are for
-					; testing purpose.
-					; This testing code is out of date,
-					; because it use alists, superseeded
-					; by list of variables.
-
-; Initialize an u8vector with random integers between 0 and 255
-
-(define (make-random-u8vector n)
-  (let ((v (make-u8vector n)))
-    (do ((i 0 (+ i 1)))
-      ((= i (u8vector-length v)) v)
-      (u8vector-set! v i (random-integer 255)))))
-
-
-; Return a random value choosed from arguments.
-
-(define (choose . choices)
-  (let ((n (length choices)))
-    (list-ref choices (random-integer n))))
-
-
-
-; Return an alist of N variable names and offsets representing addresses of
-; variables in a buffer.  Variables can be boolean or integer.
-; (<name> <bit|byte> <offset>)
-
-(define (make-datamap n)
-  (let ((make-name (lambda (x)
-		     (string->symbol
-		       (with-output-to-string "v"
-			 (lambda () (display x)))))))
-    (let loop ((i 0)
-	       (offset 0)
-	       (bits (choose 0 1 2 3 4 5 6 7 #f))
-	       (datamap '()))
-      (cond
-       ((> i n) (reverse datamap))
-       (bits => (lambda (b)
-                  (loop (+ i 1)
-                        (+ offset 1)
-                        (if (zero? b) (choose 7 #f) (- b 1))
-                        (cons
-			  (make-var (make-name i) 'bit offset b)
-                          datamap))))
-       (else (loop (+ i 1) (+ offset 8) (choose 7 #f)
-                   (cons
-		     (make-var (make-name i) 'byte offset)
-		     datamap)))))))
-
-
-                                       ; Real code stars here
-
 (define types '(bit byte f32 f64))
 
 (define-type
