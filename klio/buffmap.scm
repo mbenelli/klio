@@ -44,11 +44,14 @@
 ; (<name> <bit|byte> <offset>)
 
 (define (make-datamap n)
-  (let ((make-variable (lambda (x)
-                         (string->symbol
-                          (with-output-to-string "v"
-                            (lambda () (display x)))))))
-    (let loop ((i 0) (offset 0) (bits (choose 7 #f)) (datamap '()))
+  (let ((make-name (lambda (x)
+		     (string->symbol
+		       (with-output-to-string "v"
+			 (lambda () (display x)))))))
+    (let loop ((i 0)
+	       (offset 0)
+	       (bits (choose 0 1 2 3 4 5 6 7 #f))
+	       (datamap '()))
       (cond
        ((> i n) (reverse datamap))
        (bits => (lambda (b)
@@ -56,13 +59,12 @@
                         (+ offset 1)
                         (if (zero? b) (choose 7 #f) (- b 1))
                         (cons
-                          (list (make-variable i) 'bit offset)
+			  (make-var (make-name i) 'bit offset b)
                           datamap))))
        (else (loop (+ i 1) (+ offset 8) (choose 7 #f)
-                   (cons (list (make-variable i)
-                               'byte
-                               offset)
-                         datamap)))))))
+                   (cons
+		     (make-var (make-name i) 'byte offset)
+		     datamap)))))))
 
 
                                        ; Real code stars here
@@ -101,27 +103,27 @@
              (offset (var-offset x)))
 	 (cond
 	   ((eq? type 'byte)
-	    (table-set! accessor name
+	    (table-set! accessors name
 			(lambda ()
 			  (u8vector-ref buffer offset))))
 	   ((eq? type 'bit)
-	    (table-set! accessor name
+	    (table-set! accessors name
 			(lambda ()
 			  (extract-bit-field
 			    1
 			    (var-bit-index x)
 			    (u8vector-ref buffer offset)))))
 	   ((eq? type 'f32)
-	    (table-set! accessor name
+	    (table-set! accessors name
 			(lambda ()
 			  (with-input-from-u8vector
-			    (subu8vector buffer offeset 4)
+			    (subu8vector buffer offset (+ offset 4))
 			    (lambda () (read-f32 (current-input-port)))))))
 	   ((eq? type 'f64)
-	    (table-set! accessor name
+	    (table-set! accessors name
 			(lambda ()
 			  (with-input-from-u8vector
-			    (subu8vector buffer offset 8)
+			    (subu8vector buffer offset (+ offset 8))
 			    (lambda () (read-f64 (current-input-port)))))))
 	   (else (raise "Unknown type")))))
      datamap)
