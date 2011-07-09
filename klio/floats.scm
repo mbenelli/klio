@@ -14,6 +14,8 @@
 ;;; IEEE 754 representation is no guaranteed.
 ;;; Endianess is determined by the processor's native endianess
 
+(##namespace ("floats#"))
+(##include "~~lib/gambit#.scm")
 
 (define u8vector-subtype (##subtype (u8vector)))
 (define f32vector-subtype (##subtype (f32vector)))
