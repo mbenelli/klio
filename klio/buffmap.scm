@@ -13,7 +13,7 @@
 
 (##namespace ("buffmap#"))
 (##include "~~lib/gambit#.scm")
-(##namespace ("floats#" read-f32 read-f64))
+(##namespace ("ctypes#" read-f32 read-f64))
 
 
 (define types '(bit byte f32 f64))
