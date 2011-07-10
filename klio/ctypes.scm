@@ -1,4 +1,4 @@
-;;; floats.scm - Reading and writing floting point values
+;;; floats.scm - Reading and writing C types from byte ports.
 ;;;
 ;;; Copyright (c) 2011 by Marco Benelli <mbenelli@yahoo.com>
 ;;; All Right Reserved.
@@ -18,38 +18,57 @@
 (##include "~~lib/gambit#.scm")
 
 (define u8vector-subtype (##subtype (u8vector)))
+(define s8vector-subtype (##subtype (s8vector)))
+(define u16vector-subtype (##subtype (u16vector)))
+(define s16vector-subtype (##subtype (s16vector)))
+(define u32vector-subtype (##subtype (u32vector)))
+(define s32vector-subtype (##subtype (s32vector)))
+(define u64vector-subtype (##subtype (u64vector)))
+(define s64vector-subtype (##subtype (s64vector)))
 (define f32vector-subtype (##subtype (f32vector)))
 (define f64vector-subtype (##subtype (f64vector)))
 
 
-(define (write-f32 x port)
-  (let ((v (f32vector x)))
-    (##subtype-set! v u8vector-subtype)
-    (write-subu8vector v 0 (u8vector-length v) port)))
+(define-macro (make-writer name vtype)
+  `(define (,name x #!optional (port (current-output-port)))
+     (let ((v (,vtype x)))
+       (##subtype-set! v u8vector-subtype)
+       (write-subu8vector v 0 (u8vector-length v) port))))
 
-(define (read-f32 port)
-  (let ((v (f32vector 0.0)))
-    (##subtype-set! v u8vector-subtype)
-    (let ((n (read-subu8vector v 0 (u8vector-length v) port)))
-      (if (= n (u8vector-length v))
-        (begin
-          (##subtype-set! v f32vector-subtype)
-          (f32vector-ref v 0))
-        #!eof))))
+(define-macro (make-reader name vtype vsubtype vtype-ref init)
+  `(define (,name #!optional (port (current-input-port)))
+     (let ((v (,vtype ,init)))
+       (##subtype-set! v u8vector-subtype)
+       (let ((n (read-subu8vector v 0 (u8vector-length v) port)))
+         (if (= n (u8vector-length v))
+             (begin
+               (##subtype-set! v ,vsubtype)
+               (,vtype-ref v 0))
+             #!eof)))))
 
-(define (write-f64 x port)
-  (let ((v (f64vector x)))
-    (##subtype-set! v u8vector-subtype)
-    (write-subu8vector v 0 (u8vector-length v) port)))
+(make-writer write-s8 s8vector)
+(make-reader read-s8 s8vector s8vector-subtype s8vector-ref 0)
 
-(define (read-f64 port)
-  (let ((v (f64vector 0.0)))
-    (##subtype-set! v u8vector-subtype)
-    (let ((n (read-subu8vector v 0 (u8vector-length v) port)))
-      (if (= n (u8vector-length v))
-        (begin
-          (##subtype-set! v f64vector-subtype)
-          (f64vector-ref v 0))
-        #!eof))))
+(make-writer write-u16 u16vector)
+(make-reader read-u16 u16vector u16vector-subtype u16vector-ref 0)
 
+(make-writer write-s16 s16vector)
+(make-reader read-s16 s16vector s16vector-subtype s16vector-ref 0)
 
+(make-writer write-u32 u32vector)
+(make-reader read-u32 u32vector u32vector-subtype u32vector-ref 0)
+
+(make-writer write-s32 s32vector)
+(make-reader read-s32 s32vector s32vector-subtype s32vector-ref 0)
+
+(make-writer write-u64 u64vector)
+(make-reader read-u64 u64vector u64vector-subtype u64vector-ref 0)
+
+(make-writer write-s64 s64vector)
+(make-reader read-s64 s64vector s64vector-subtype s64vector-ref 0)
+
+(make-writer write-f32 f32vector)
+(make-reader read-f32 f32vector f32vector-subtype f32vector-ref 0.0)
+
+(make-writer write-f64 f64vector)
+(make-reader read-f64 f64vector f64vector-subtype f64vector-ref 0.0)

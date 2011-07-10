@@ -1,5 +1,5 @@
-(include "../ctypes#.scm")
-(include "../ctypes.scm")
+(include "../klio/ctypes#.scm")
+(include "../klio/ctypes.scm")
 
 (call-with-output-file
   "f32test"
