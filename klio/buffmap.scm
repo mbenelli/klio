@@ -13,7 +13,7 @@
 
 (##namespace ("buffmap#"))
 (##include "~~lib/gambit#.scm")
-(##namespace ("ctypes#" read-f32 read-f64))
+(##namespace ("ctypes#" read-u16 write-u16 read-u32 write-u32 read-f32 read-f64))
 
 
 (define types '(bit byte f32 f64))
@@ -49,29 +49,35 @@
              (type (var-type x))
              (offset (var-offset x)))
 	 (cond
-	   ((eq? type 'byte)
-	    (table-set! accessors name
-			(lambda ()
-			  (u8vector-ref buffer offset))))
-	   ((eq? type 'bit)
-	    (table-set! accessors name
-			(lambda ()
-			  (extract-bit-field
-			    1
-			    (var-bit-index x)
-			    (u8vector-ref buffer offset)))))
-	   ((eq? type 'f32)
-	    (table-set! accessors name
-			(lambda ()
-			  (with-input-from-u8vector
-			    (subu8vector buffer offset (+ offset 4))
-			    (lambda () (read-f32 (current-input-port)))))))
-	   ((eq? type 'f64)
-	    (table-set! accessors name
-			(lambda ()
-			  (with-input-from-u8vector
-			    (subu8vector buffer offset (+ offset 8))
-			    (lambda () (read-f64 (current-input-port)))))))
+	   ((eq? type 'byte) (table-set! accessors name
+                               (lambda ()
+                                 (u8vector-ref buffer offset))))
+	   ((eq? type 'bit) (table-set! accessors name
+                              (lambda ()
+                                (extract-bit-field
+                                  1
+                                  (var-bit-index x)
+                                  (u8vector-ref buffer offset)))))
+           ((eq? type 'u16) (table-set! accessor name
+                              (lambda ()
+                                (with-input-from-u8vector
+                                  (subu8vector buffer offset (+ offset 2))
+                                  (lambda () (read-u16))))))
+           ((eq? type 'u32) (table-set! accessor name
+                              (lambda ()
+                                (with-input-from-u8vector
+                                  (subu8vector buffer offset (+ offset 4))
+                                  (lambda () (read-u32))))))
+	   ((eq? type 'f32) (table-set! accessors name
+                              (lambda ()
+                                (with-input-from-u8vector
+                                  (subu8vector buffer offset (+ offset 4))
+                                  (lambda () (read-f32))))))
+	   ((eq? type 'f64) (table-set! accessors name
+                              (lambda ()
+                                (with-input-from-u8vector
+                                  (subu8vector buffer offset (+ offset 8))
+                                  (lambda () (read-f64))))))
 	   (else (raise "Unknown type")))))
      datamap)
     (lambda (k) ((table-ref accessors k)))))
