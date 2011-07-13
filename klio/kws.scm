@@ -41,7 +41,8 @@
                              (".ico"  . "image/ico")
                              (".jpg"  . "image/jpg")
                              (".jpeg" . "image/jpeg")
-                             (".png"  . "image/png")))))
+                             (".png"  . "image/png")
+                             (".svg"  . "image/svg+xml")))))
       (cdr mimetype))
     "text/plain"))
 
