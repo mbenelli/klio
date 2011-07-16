@@ -1,18 +1,18 @@
-;;; floats.scm - Reading and writing C types from byte ports.
-;;;
-;;; Copyright (c) 2011 by Marco Benelli <mbenelli@yahoo.com>
-;;; All Right Reserved.
-;;;
-;;; Author: Marco Benelli <mbenelli@yahoo.com>
-;;;
-;;;
-;;; Based on suggestions from Marc Feeley on Gambit's mailing list:
-;;; https://mercure.iro.umontreal.ca/pipermail/gambit-list/2009-June/003671.html
-;;;
-;;; Notes:
-;;;
-;;; IEEE 754 representation is no guaranteed.
-;;; Endianess is determined by the processor's native endianess
+; floats.scm - Reading and writing C types from byte ports.
+;
+; Copyright (c) 2011 by Marco Benelli <mbenelli@yahoo.com>
+; All Right Reserved.
+;
+; Author: Marco Benelli <mbenelli@yahoo.com>
+;
+;
+; Based on suggestions from Marc Feeley on Gambit's mailing list:
+; https://mercure.iro.umontreal.ca/pipermail/gambit-list/2009-June/003671.html
+;
+; Notes:
+;
+; IEEE 754 representation is no guaranteed.
+; Endianess is determined by the processor's native endianess.
 
 (##namespace ("ctypes#"))
 (##include "~~lib/gambit#.scm")
