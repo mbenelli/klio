@@ -29,13 +29,13 @@
 (define f64vector-subtype (##subtype (f64vector)))
 
 
-(define-macro (make-writer name vtype)
+(define-macro (define-writer name vtype)
   `(define (,name x #!optional (port (current-output-port)))
      (let ((v (,vtype x)))
        (##subtype-set! v u8vector-subtype)
        (write-subu8vector v 0 (u8vector-length v) port))))
 
-(define-macro (make-reader name vtype vsubtype vtype-ref init)
+(define-macro (define-reader name vtype vsubtype vtype-ref init)
   `(define (,name #!optional (port (current-input-port)))
      (let ((v (,vtype ,init)))
        (##subtype-set! v u8vector-subtype)
@@ -46,29 +46,29 @@
                (,vtype-ref v 0))
              #!eof)))))
 
-(make-writer write-s8 s8vector)
-(make-reader read-s8 s8vector s8vector-subtype s8vector-ref 0)
+(define-writer write-s8 s8vector)
+(define-reader read-s8 s8vector s8vector-subtype s8vector-ref 0)
 
-(make-writer write-u16 u16vector)
-(make-reader read-u16 u16vector u16vector-subtype u16vector-ref 0)
+(define-writer write-u16 u16vector)
+(define-reader read-u16 u16vector u16vector-subtype u16vector-ref 0)
 
-(make-writer write-s16 s16vector)
-(make-reader read-s16 s16vector s16vector-subtype s16vector-ref 0)
+(define-writer write-s16 s16vector)
+(define-reader read-s16 s16vector s16vector-subtype s16vector-ref 0)
 
-(make-writer write-u32 u32vector)
-(make-reader read-u32 u32vector u32vector-subtype u32vector-ref 0)
+(define-writer write-u32 u32vector)
+(define-reader read-u32 u32vector u32vector-subtype u32vector-ref 0)
 
-(make-writer write-s32 s32vector)
-(make-reader read-s32 s32vector s32vector-subtype s32vector-ref 0)
+(define-writer write-s32 s32vector)
+(define-reader read-s32 s32vector s32vector-subtype s32vector-ref 0)
 
-(make-writer write-u64 u64vector)
-(make-reader read-u64 u64vector u64vector-subtype u64vector-ref 0)
+(define-writer write-u64 u64vector)
+(define-reader read-u64 u64vector u64vector-subtype u64vector-ref 0)
 
-(make-writer write-s64 s64vector)
-(make-reader read-s64 s64vector s64vector-subtype s64vector-ref 0)
+(define-writer write-s64 s64vector)
+(define-reader read-s64 s64vector s64vector-subtype s64vector-ref 0)
 
-(make-writer write-f32 f32vector)
-(make-reader read-f32 f32vector f32vector-subtype f32vector-ref 0.0)
+(define-writer write-f32 f32vector)
+(define-reader read-f32 f32vector f32vector-subtype f32vector-ref 0.0)
 
-(make-writer write-f64 f64vector)
-(make-reader read-f64 f64vector f64vector-subtype f64vector-ref 0.0)
+(define-writer write-f64 f64vector)
+(define-reader read-f64 f64vector f64vector-subtype f64vector-ref 0.0)
