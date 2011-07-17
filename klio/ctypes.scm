@@ -29,6 +29,32 @@
 (define f64vector-subtype (##subtype (f64vector)))
 
 
+; Utilites for endianes handlings.
+; TODO: maybe these utilities should stay in another place.
+
+
+(define native-endianess 'little)  ; little or big
+
+(define (u8vector-reverse v)
+  (let* ((len (u8vector-length v))
+         (u (make-u8vector len)))
+    (do ((i 0 (+ 1 i))
+         (j (- len 1) (- j 1)))
+      ((= i len) u)
+      (u8vector-set! u j (u8vector-ref v i)))))
+
+(define (u8vector-reverse! v)
+  (do ((i 0 (+ 1 i))
+       (j (- (u8vector-length v) 1) (- j 1)))
+    ((>= i j) v)
+    (let ((tmp (u8vector-ref v i)))
+      (u8vector-set! v i (u8vector-ref v j))
+      (u8vector-set! v j tmp))))
+
+
+; Macros for defining readers and writers.
+
+
 (define-macro (define-writer name vtype)
   `(define (,name x #!optional (port (current-output-port)))
      (let ((v (,vtype x)))
@@ -45,6 +71,10 @@
                (##subtype-set! v ,vsubtype)
                (,vtype-ref v 0))
              #!eof)))))
+
+
+; Readers and writer.
+
 
 (define-writer write-s8 s8vector)
 (define-reader read-s8 s8vector s8vector-subtype s8vector-ref 0)
