@@ -34,4 +34,6 @@
    make-request-header
    make-response-header
    fetch-db
-   write-db))
+   write-db
+   fetch/apply))
+

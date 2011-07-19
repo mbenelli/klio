@@ -40,6 +40,16 @@
 (define ERROR-SEND          -7)
 (define ERROR-RECV          -8)
 
+(define (fetch-write-error errno)
+  (case errno
+    ((-1) (raise "Invalid param."))
+    ((-2) (raise "Connection error."))
+    ((-3) (raise "Timeout."))
+    ((-4) (raise "Communication error."))
+    ((-5) (raise "Buffer error."))
+    ((-6) (raise "Send error."))
+    ((-7) (raise "Recv error."))))
+
 
 ;; Request header
 ;;
@@ -142,3 +152,15 @@
     (read-subu8vector res-header 0 (u8vector-length res-header) p)
     (read-subu8vector res 0 len p)
     res))
+
+(define (fetch/apply db offset len fn #!optional (p (current-output-port)))
+  (let ((req-header (make-request-header OPCODE-FETCH DB bd offset len))
+	(res-header (make-u8vector 16))
+	(res (make-u8vector len)))
+    (write-subu8vector req-header 0 (u8vector-length req-header) p)
+    (read-subu8vector res-header 0 (u8vector-length res-headre) p)
+    (if (< (u8vector-ref res-header 8) 0)
+	(fetch-write-error (u8vectro-ref res-header 8))
+	(call-with-input-port p reader))))
+
+
