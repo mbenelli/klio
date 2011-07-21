@@ -41,7 +41,65 @@
     (do ((i 0 (+ i 1)))
       ((= i n) res)
       (push-value i))))
-      
+
+
+;; From http://okmij.org/ftp/Scheme/binary-io.html
+;; Slighty modified.
+
+(define (combine . bytes)
+  (let loop ((bytes bytes) (accum 0))
+    (if (null? bytes) accum
+        (loop (cdr bytes)
+              (+ (* 256 accum) (car bytes))))))
+
+(define (read-float port)
+  (let* ((b1 (read-u8 port))
+         (b2 (read-u8 port))
+         (b3 (read-u8 port))
+         (b4 (read-u8 port)))
+    (cond
+      ((and (zero? b1) (zero? b2) (zero? b3) (zero? b4)) 0.0)
+      (else
+         (let* ((sign-neg
+                (and (> b1 127) (begin (set! b1 (- b1 128)) #t)))
+                (full-exp (+ (* 2 b1)
+                             (if (> b2 127)
+                                 (begin (set! b2 (- b2 128)) 1) 0)))
+                (num
+                 (if (= 255 full-exp)
+                     #f         ; won't handle NaN and +Inf, -Inf
+		     ; For Bigloo, change (expt 2 full-exp)
+		     ; to read: (expt 2 full-exp)
+                     (* (expt 2.0 full-exp)
+                        (combine
+                         (if (zero? full-exp) b2 (+ b2 128))
+                         b3 b4)
+                        (if (zero? full-exp) 1.401298464324817e-45
+                            7.006492321624085e-46)))))
+           (if sign-neg (and num (- num)) num))))))
+
+
+(define (read-floats-vector n port)
+  (let ((res (make-f32vector n)))
+    (do ((i 0 (+ i 1)))
+      ((= n i) res)
+      (f32vector-set! res i (read-float port)))))
+
+(define (test-reading-floats v n)
+  (println "=====     read-f32vector")
+  (time
+    (do ((i 0 (+ i 1)))
+      ((= i n) 'done)
+      (call-with-input-u8vector v
+	(lambda (port)
+	  (read-f32vector 32 port 'big)))))
+  (println "=====     read-floats-vector")
+  (time
+    (do ((i 0 (+ i 1)))
+      ((= i n) 'done)
+      (call-with-input-u8vector v
+	(lambda (port)
+	  (read-floats-vector 32 port))))))
 
 (define-type
   query0
@@ -69,7 +127,7 @@
 	     `(server-address: ,(address) port-number: 2000))))
     (fetch/apply 62 0 250 read-db p)))
 
-(define q0 (call-with-input-u8vector r read-db))
+;(define q0 (call-with-input-u8vector r read-db))
 
 ;; Sample output.
 
