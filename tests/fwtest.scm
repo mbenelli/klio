@@ -86,6 +86,12 @@
       ((= n i) res)
       (f32vector-set! res i (read-float port)))))
 
+(define (read-ieee-f32vector n port)
+  (let ((res (make-f32vector n)))
+    (do ((i 0 (+ i 1)))
+      ((= i n) res)
+      (f32vector-set! res i (read-ieee-float32 port 'big-endian)))))
+
 (define (test-reading-floats v n)
   (println "=====     read-f32vector")
   (time
@@ -107,11 +113,7 @@
       ((= i n) 'done)
       (call-with-input-u8vector v
 	(lambda (port)
-	  (let ((res (make-f32vector 32)))
-	    (do ((i 0 (+ i 1)))
-	      ((= i 32) 'done)
-	      (f32vector-set! res i
-			      (read-ieee-float32 port 'big-endian)))))))))
+	  (read-ieee-f32vector 32 port))))))
 
 (define-type
   query0
@@ -127,7 +129,7 @@
 	(alarms (make-u8vector 10))
 	(enablings (make-u8vector 16))
 	(prms (make-vector 24)))
-    (set! measures (read-f32vector 32 p 'big))
+    (set! measures (read-ieee-f32vector 32 p))
     (read-subu8vector alarms 0 10 p)
     (read-subu8vector enablings 0 16 p)
     (set! prms (read-f32vector 24 p 'big))
