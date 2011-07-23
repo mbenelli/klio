@@ -7,6 +7,7 @@
 ;;;
 
 (##include "../klio/ctypes#.scm")
+(##include "../klio/binary-io#.scm")
 (##include "../klio/fetchwrite#.scm")
 
 (define address (make-parameter "localhost"))
@@ -99,7 +100,18 @@
       ((= i n) 'done)
       (call-with-input-u8vector v
 	(lambda (port)
-	  (read-floats-vector 32 port))))))
+	  (read-floats-vector 32 port)))))
+  (println "=====     read-ieee-float32")
+  (time
+    (do ((i 0 (+ i 1)))
+      ((= i n) 'done)
+      (call-with-input-u8vector v
+	(lambda (port)
+	  (let ((res (make-f32vector 32)))
+	    (do ((i 0 (+ i 1)))
+	      ((= i 32) 'done)
+	      (f32vector-set! res i
+			      (read-ieee-float32 port 'big-endian)))))))))
 
 (define-type
   query0
