@@ -105,18 +105,16 @@
 
 (define (fetch org-id db offset len #!optional (p (current-output-port)))
   (write-subu8vector (make-response-header OK) 0 16 p)
-  ;(mutex-lock! buffer-mutex #f #f)
+  (mutex-lock! buffer-mutex #f #f)
   (write-subu8vector sample-data offset (+ offset len) p)
   (force-output p)
-  ;(mutex-unlock! buffer-mutex)
-  )
+  (mutex-unlock! buffer-mutex))
 
 
 (define (srv s)
   (let* ((p (read s))
          (request (make-u8vector 16)))
     (read-subu8vector request 0 16 p)
-    (pp request)
     (serve-request request p)
     (srv s)))
 
@@ -126,5 +124,7 @@
          (ft (make-thread (lambda () (srv fp))))
          (wt (make-thread (lambda () (srv wp)))))
     (thread-start! ft)
-    (thread-start! wt)))
+    (thread-start! wt)
+    (if (char=? (read-char) #\q)
+	(exit))))
 
