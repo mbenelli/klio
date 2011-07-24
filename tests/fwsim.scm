@@ -10,12 +10,61 @@
 ;;
 ;; TODO: check mutex
 
-(##namespace ("fwsim#"))
 (##include "~~lib/gambit#.scm")
 (##namespace ("fetchwrite#" OK OPCODE-WRITE OPCODE-FETCH make-response-header))
 
 
 (define buffer (make-u8vector 1024))
+
+
+(define sample-data
+  '#u8(
+
+       ; Measures
+
+       66 242 4 108
+       67 159 74 131
+       0 0 0 0
+       0 0 0 0
+       0 0 0 0
+       0 0 0 0
+       64 224 0 0
+       65 166 149 142
+       0 0 0 0
+       0 0 0 0
+       0 0 0 0
+       0 0 0 0
+       0 0 0 0
+       0 0 0 0
+       65 1 213 9
+       0 0 0 0
+       66 242 4 108
+       0 0 0 0
+       0 0 0 0
+       0 0 0 0
+       0 0 0 0
+       0 0 0 0
+       0 0 0 0
+       0 0 0 0
+       0 0 0 0
+       0 0 0 0
+       66 242 4 119
+       0 0 0 0
+       0 0 0 0
+       65 152 0 0
+       0 0 0 0
+       0 0 0 0
+
+       ; Alarms 
+
+       0 0 0 0 0 0 0 0 0 0
+
+       ; misc
+
+       9 0 0 141 0 0 11 232 0 0 0 0 0 0 0 0 67 22 0 0 0 0 0 0 64 64 0 0 66 72
+       0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+       0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+       0 0 0 0 0 0 0 0 0 0))
 
 (define buffer-mutex (make-mutex))
 
@@ -47,7 +96,7 @@
       data
       (lambda ()
         ;(mutex-lock! buffer-mutex #f #f)
-        (read-subu8vector buffer offset (+ offset len))
+        (read-subu8vector sample-data offset (+ offset len))
         ;(mutex-unlock! buffer-mutex)
         ))
     (write-subu8vector (make-response-header OK) 0 16 p)
@@ -57,7 +106,7 @@
 (define (fetch org-id db offset len #!optional (p (current-output-port)))
   (write-subu8vector (make-response-header OK) 0 16 p)
   ;(mutex-lock! buffer-mutex #f #f)
-  (write-subu8vector buffer offset (+ offset len) p)
+  (write-subu8vector sample-data offset (+ offset len) p)
   (force-output p)
   ;(mutex-unlock! buffer-mutex)
   )
@@ -67,6 +116,7 @@
   (let* ((p (read s))
          (request (make-u8vector 16)))
     (read-subu8vector request 0 16 p)
+    (pp request)
     (serve-request request p)
     (srv s)))
 

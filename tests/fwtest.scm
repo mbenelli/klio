@@ -132,7 +132,7 @@
     (set! measures (read-ieee-f32vector 32 p))
     (read-subu8vector alarms 0 10 p)
     (read-subu8vector enablings 0 16 p)
-    (set! prms (read-f32vector 24 p 'big))
+    (set! prms (read-ieee-f32vector 24 p))
     (make-query0 measures alarms enablings prms)))
 
 
