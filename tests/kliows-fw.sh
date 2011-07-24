@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+cd ../klio
+gsi -:da- prelude lists base64 datetime http binary-io fetchwrite json kws ../tests/kws-fw -e '(begin (thread-start! kws-fw#update-thread) (kws#kws port-number: 8000 server-root: "../benchmarks/sandbox/" dispatcher: kws-fw#dispatcher multithread: #t))'
+
