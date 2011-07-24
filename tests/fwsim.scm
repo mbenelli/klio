@@ -111,11 +111,20 @@
   (mutex-unlock! buffer-mutex))
 
 
-(define (srv s)
-  (let* ((p (read s))
-         (request (make-u8vector 16)))
+(define (serve-connection p)
+  (let ((request (make-u8vector 16)))
+    (print (time->seconds (current-time)) " - Serving request ...")
     (read-subu8vector request 0 16 p)
     (serve-request request p)
+    (println "done.")
+    (serve-connection p)))
+
+(define (srv s)
+  (let ((p (read s)))
+    (thread-start!
+      (make-thread
+	(lambda ()
+	  (serve-connection p))))
     (srv s)))
 
 (define (simulator-start fetch-port write-port)
