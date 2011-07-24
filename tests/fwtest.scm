@@ -125,10 +125,10 @@
 
 
 (define (read-db p)
-  (let ((measures (make-vector 32))
+  (let ((measures #f)
 	(alarms (make-u8vector 10))
 	(enablings (make-u8vector 16))
-	(prms (make-vector 24)))
+	(prms #f))
     (set! measures (read-ieee-f32vector 32 p))
     (read-subu8vector alarms 0 10 p)
     (read-subu8vector enablings 0 16 p)
