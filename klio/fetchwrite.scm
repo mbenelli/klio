@@ -154,13 +154,14 @@
     res))
 
 (define (fetch/apply db offset len fn #!optional (p (current-output-port)))
-  (let ((req-header (make-request-header OPCODE-FETCH DB bd offset len))
+  (let ((req-header (make-request-header OPCODE-FETCH DB db offset len))
 	(res-header (make-u8vector 16))
 	(res (make-u8vector len)))
     (write-subu8vector req-header 0 (u8vector-length req-header) p)
-    (read-subu8vector res-header 0 (u8vector-length res-headre) p)
+    (force-output p)
+    (read-subu8vector res-header 0 (u8vector-length res-header) p)
     (if (< (u8vector-ref res-header 8) 0)
-	(fetch-write-error (u8vectro-ref res-header 8))
-	(call-with-input-port p reader))))
+	(fetch-write-error (u8vector-ref res-header 8))
+	(fn p))))
 
 
