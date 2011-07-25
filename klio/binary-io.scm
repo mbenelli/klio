@@ -2,7 +2,7 @@
 ;
 ; Copyright (c) 2011 by Marco Benelli. All rights reserved.
 ;
-; Based of srfi-52 by Alex Shinn.
+; Based of srfi-56 by Alex Shinn.
 ;
 ; === Original copyright notice ===
 ;
@@ -59,7 +59,7 @@
 (define character-port? port?)
 (define open-binary-input-file open-input-file)
 (define open-binary-output-file open-output-file)
-(define call-with-binaryeinput-file call-with-input-file)
+(define call-with-binary-input-file call-with-input-file)
 (define call-with-binary-output-file call-with-output-file)
 (define with-input-from-binary-file with-input-from-file)
 (define with-output-to-binary-file with-output-to-file)
@@ -99,16 +99,37 @@
 
 
 
-(define (read-binary-uint8 . x) ; takes optional endian, unlike read-u8
-  (read-u8 (or (and (pair? x) (car x)) (current-input-port))))
-(define (read-binary-uint16 . x) (apply read-binary-uint 2 x))
-(define (read-binary-uint32 . x) (apply read-binary-uint 4 x))
-(define (read-binary-uint64 . x) (apply read-binary-uint 8 x))
+(define (read-binary-uint8 #!optional (p (current-input-port))
+                           (e *default-endian*))
+  (read-u8 p))
 
-(define (read-binary-sint8 . x)  (apply read-binary-sint 1 x))
-(define (read-binary-sint16 . x) (apply read-binary-sint 2 x))
-(define (read-binary-sint32 . x) (apply read-binary-sint 4 x))
-(define (read-binary-sint64 . x) (apply read-binary-sint 8 x))
+(define (read-binary-uint16 #!optional (p (current-input-port))
+                           (e *default-endian*))
+  (read-binary-uint 2 p e))
+
+(define (read-binary-uint32 #!optional (p (current-input-port))
+                           (e *default-endian*))
+  (read-binary-uint 4 p e))
+
+(define (read-binary-uint64 #!optional (p (current-input-port))
+                           (e *default-endian*))
+  (read-binary-uint 8 p e))
+
+(define (read-binary-sint8 #!optional (p (current-input-port))
+                           (e *default-endian*))
+  (read-binary-sint 1 p e))
+
+(define (read-binary-sint16 #!optional (p (current-input-port))
+                           (e *default-endian*))
+  (read-binary-sint 2 p e))
+
+(define (read-binary-sint32 #!optional (p (current-input-port))
+                           (e *default-endian*))
+  (read-binary-sint 4 p e))
+
+(define (read-binary-sint64 #!optional (p (current-input-port))
+                           (e *default-endian*))
+  (read-binary-sint 8 p e))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; basic writing
@@ -116,13 +137,14 @@
 (define (write-binary-uint size int #!optional (port (current-output-port))
 			   (endian *default-endian*))
   (let loop ((i size) (n int) (ls '()))
-    (for-each
-      (lambda (b) (write-u8 b port))
-      (if (eq? endian 'big-endian)
-	  ls
-	  (reverse ls)))
-    (loop (- i 1) (arithmetic-shift n *byte-right-shift*)
-	  (cons (bitwise-and n *byte-mask*) ls))))
+    (if (zero? i)
+      (for-each
+        (lambda (b) (write-u8 b port))
+        (if (eq? endian 'big-endian)
+          ls
+          (reverse ls)))
+      (loop (- i 1) (arithmetic-shift n *byte-right-shift*)
+            (cons (bitwise-and n *byte-mask*) ls)))))
 
 (define (write-binary-sint size int #!optional (port (current-output-port))
 			   (endian *default-endian*))
@@ -140,15 +162,37 @@
 	      (cons (bitwise-and n *byte-mask*) ls)))))
 
 
-(define write-binary-uint8         write-u8)
-(define (write-binary-uint16 . x)  (apply write-binary-uint 2 x))
-(define (write-binary-uint32 . x)  (apply write-binary-uint 4 x))
-(define (write-binary-uint64 . x)  (apply write-binary-uint 8 x))
+(define (write-binary-uint8 n #!optional (p (current-output-port))
+                            (e *default-endian*))
+  (write-u8 n p))
 
-(define (write-binary-sint8 . x)   (apply write-binary-sint 1 x))
-(define (write-binary-sint16 . x)  (apply write-binary-sint 2 x))
-(define (write-binary-sint32 . x)  (apply write-binary-sint 4 x))
-(define (write-binary-sint64 . x)  (apply write-binary-sint 8 x))
+(define (write-binary-uint16 n #!optional (p (current-output-port))
+                             (e *default-endian*))
+  (write-binary-uint 2 n p e))
+
+(define (write-binary-uint32 n #!optional (p (current-output-port))
+                             (e *default-endian*))
+  (write-binary-uint 4 n p e))
+
+(define (write-binary-uint64 n #!optional (p (current-output-port))
+                             (e *default-endian*))
+  (write-binary-uint 8 n p e))
+
+(define (write-binary-sint8 n #!optional (p (current-output-port))
+                            (e *default-endian*))
+  (write-binary-sint 1 n p e))
+
+(define (write-binary-sint16 n #!optional (p (current-output-port))
+                             (e *default-endian*))
+  (write-binary-sint 2 n p e))
+
+(define (write-binary-sint32 n #!optional (p (current-output-port))
+                             (e *default-endian*))
+  (write-binary-sint 4 n p e))
+
+(define (write-binary-sint64 n #!optional (p (current-output-port))
+                             (e *default-endian*))
+  (write-binary-sint 8 n p e))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -159,33 +203,33 @@
 
 (define (/opt o) (and (pair? o) (car o)))
 
-(define (read-network-uint16 . o)
-  (read-binary-uint 2 (/opt o) 'big-endian))
-(define (read-network-uint32 . o)
-  (read-binary-uint 4 (/opt o) 'big-endian))
-(define (read-network-uint64 . o)
-  (read-binary-uint 8 (/opt o) 'big-endian))
+(define (read-network-uint16 #!optional (p (current-input-port)))
+  (read-binary-uint 2 p 'big-endian))
+(define (read-network-uint32 #!optional (p (current-input-port)))
+  (read-binary-uint 4 p 'big-endian))
+(define (read-network-uint64 #!optional (p (current-input-port)))
+  (read-binary-uint 8 p 'big-endian))
 
-(define (read-network-sint16 . o)
-  (read-binary-sint 2 (/opt o) 'big-endian))
-(define (read-network-sint32 . o)
-  (read-binary-sint 4 (/opt o) 'big-endian))
-(define (read-network-sint64 . o)
-  (read-binary-sint 8 (/opt o) 'big-endian))
+(define (read-network-sint16 #!optional (p (current-input-port)))
+  (read-binary-sint 2 p 'big-endian))
+(define (read-network-sint32 #!optional (p (current-input-port)))
+  (read-binary-sint 4 p 'big-endian))
+(define (read-network-sint64 #!optional (p (current-input-port)))
+  (read-binary-sint 8 p 'big-endian))
 
-(define (write-network-uint16 x . o)
-  (write-binary-uint 2 x (/opt o) 'big-endian))
-(define (write-network-uint32 x . o)
-  (write-binary-uint 4 x (/opt o) 'big-endian))
-(define (write-network-uint64 x . o)
-  (write-binary-uint 8 x (/opt o) 'big-endian))
+(define (write-network-uint16 x #!optional (p (current-output-port)))
+  (write-binary-uint 2 x p 'big-endian))
+(define (write-network-uint32 x #!optional (p (current-output-port)))
+  (write-binary-uint 4 x p 'big-endian))
+(define (write-network-uint64 x #!optional (p (current-output-port)))
+  (write-binary-uint 8 x p 'big-endian))
 
-(define (write-network-sint16 x . o)
-  (write-binary-sint 2 x (/opt o) 'big-endian))
-(define (write-network-sint32 x . o)
-  (write-binary-sint 4 x (/opt o) 'big-endian))
-(define (write-network-sint64 x . o)
-  (write-binary-sint 8 x (/opt o) 'big-endian))
+(define (write-network-sint16 x #!optional (p (current-output-port)))
+  (write-binary-sint 2 x p 'big-endian))
+(define (write-network-sint32 x #!optional (p (current-output-port)))
+  (write-binary-sint 4 x p 'big-endian))
+(define (write-network-sint64 x #!optional (p (current-output-port)))
+  (write-binary-sint 8 x p 'big-endian))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -259,7 +303,7 @@
 	    (sign b1 b2 b3 b4)
 	    (sign b4 b3 b2 b1)))))
 
-(define (read-ieee-float64 #!optional (port (current-output-port))
+(define (read-ieee-float64 #!optional (port (current-input-port))
 			   (endian *default-float-endian*))
   (define (mantissa expn b2 b3 b4 b5 b6 b7 b8)
     (case expn   ; recognize special literal exponents
@@ -409,3 +453,92 @@
 ;           (else (reverse (bytes)))))))
 ;
 ;
+
+(define (call-with-mantissa&exponent num fn #!optional (base 2) (mant-size 23)
+                                     (exp-size 8))
+  (cond
+    ((negative? num) (call-with-mantissa&exponent (- num) fn base mant-size
+                                                  exp-size))
+    ((zero? num) (fn 0 0)) 
+    (else
+      (let* ((bot (expt base mant-size))
+             (top (* base bot)))
+        (let loop ((n (exact->inexact num)) (e 0))
+          (cond
+            ((>= n top) (loop (/ n base) (+ e 1)))
+            ((< n bot) (loop (* n base) (- e 1)))
+            (else (fn (inexact->exact (round n)) e))))))))
+
+(define (write-ieee-float32 num #!optional (port (current-output-port))
+                            (endian *default-float-endian*))
+  (define (bytes)
+    (call-with-mantissa&exponent
+      num
+      (lambda (f e)
+        (let ((e0 (+ e 127 23)))
+          (cond
+            ((negative? e0)
+             (let* ((f1 (inexact->exact (round (* f (expt 2 (- e0 1))))))
+                    (b2 (extract-bit-field 7 16 f1))        ; mant:16-23
+                    (b3 (extract-bit-field 8 8 f1))         ; mant:8-15
+                    (b4 (extract-bit-field 8 0 f1)))        ; mant:0-7
+               (list (if (negative? num) 128 0) b2 b3 b4)))
+            ((> e0 255) ; XXXX here we just write infinity
+             (list (if (negative? num) 255 127) 128 0 0))
+            (else
+              (let* ((b0 (arithmetic-shift e0 -1))
+                     (b1 (if (negative? num) (+ b0 128) b0)) ; sign + exp:1-7
+                     (b2 (bitwise-ior
+                           (if (odd? e0) 128 0)               ; exp:0
+                           (extract-bit-field 7 16 f)))       ;   + mant:16-23
+                     (b3 (extract-bit-field 8 8 f))          ; mant:8-15
+                     (b4 (extract-bit-field 8 0 f)))         ; mant:0-7
+                (list b1 b2 b3 b4))))))))
+    (for-each
+     (lambda (b) (write-u8 b port))
+
+     (cond ((zero? num) '(0 0 0 0))
+           ((eq? endian 'big-endian) (bytes))
+           (else (reverse (bytes))))))
+
+(define (write-ieee-float64 num #!optional (port (current-output-port))
+                            (endian *default-float-endian*))
+  (define (bytes)
+    (call-with-mantissa&exponent
+      num
+      (lambda (f e)
+        (let ((e0 (+ e 1023 52)))
+          (cond
+            ((negative? e0)
+             (let* ((f1 (inexact->exact (round (* f (expt 2 (- e0 1))))))
+                    (b2 (extract-bit-field 4 48 f1))
+                    (b3 (extract-bit-field 8 40 f1))
+                    (b4 (extract-bit-field 8 32 f1))
+                    (b5 (extract-bit-field 8 24 f1))
+                    (b6 (extract-bit-field 8 16 f1))
+                    (b7 (extract-bit-field 8 8 f1))
+                    (b8 (extract-bit-field 8 0 f1)))
+               (list (if (negative? num) 128 0) b2 b3 b4 b5 b6 b7 b8)))
+            ((> e0 4095) ; infinity
+             (list (if (negative? num) 255 127) 224 0 0 0 0 0 0))
+            (else
+              (let* ((b0 (extract-bit-field 7 4 e0))
+                     (b1 (if (negative? num) (+ b0 128) b0))
+                     (b2 (bitwise-ior (arithmetic-shift
+                                        (extract-bit-field 4 0 e0)
+                                        4)
+                                      (extract-bit-field 4 48 f)))
+                     (b3 (extract-bit-field 8 40 f))
+                     (b4 (extract-bit-field 8 32 f))
+                     (b5 (extract-bit-field 8 24 f))
+                     (b6 (extract-bit-field 8 16 f))
+                     (b7 (extract-bit-field 8 8 f))
+                     (b8 (extract-bit-field 8 0 f)))
+                (list b1 b2 b3 b4 b5 b6 b7 b8))))))
+      2 52 11))
+  (for-each
+    (lambda (b) (write-u8 b port))
+    (cond ((zero? num) '(0 0 0 0 0 0 0 0))
+          ((eq? endian 'big-endian) (bytes))
+          (else (reverse (bytes))))))
+

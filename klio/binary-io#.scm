@@ -31,6 +31,11 @@
   write-binary-uint32
   write-binary-uint64
 
+  write-binary-sint8
+  write-binary-sint16
+  write-binary-sint32
+  write-binary-sint64
+
   read-network-uint16
   read-network-uint32
   read-network-uint64
@@ -55,7 +60,7 @@
 
   ; TODO
   ; 
-  ; write-ieee-float32
-  ; write-ieee-float64
+  write-ieee-float32
+  write-ieee-float64
   
   ))
