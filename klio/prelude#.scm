@@ -153,3 +153,15 @@
 		   (cons (list g (car args)) env)
 		   (cons g body)
 		   (cdr args)))))))
+
+
+                                       ; Simple mutex handlings.
+
+(define-macro (with-mutex mutex . body)
+  (with-gensyms (m r)
+    `(let ((,m ,mutex))
+       (mutex-lock! ,m #f #f)
+       (let ((,r (begin ,@body)))
+	 (mutex-unlock! ,m)
+	 ,r))))
+
