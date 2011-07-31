@@ -1,4 +1,7 @@
-;;; kws-db.scm - sqlite test for klio web server
+; kws-db.scm - sqlite test for klio web server
+;
+; Copyright (c) 2008-2010 by Marco Benelli <mbenelli@yahoo.com>
+; All Rights Reserved.
 
 (##namespace ("kws-db#"))
 (##include "~~lib/gambit#.scm")

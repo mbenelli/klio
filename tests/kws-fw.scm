@@ -1,4 +1,7 @@
 ; kws-fw.scm - fetch-write test for klio web server
+;
+; Copyright (c) 2008-2010 by Marco Benelli <mbenelli@yahoo.com>
+; All Rights Reserved.
 
 (##namespace ("kws-fw#"))
 (##include "~~lib/gambit#.scm")
@@ -35,11 +38,36 @@
     `(server-address: ,(datasource-address) port-number: ,(fetch-port-number))))
 
 
+; Data map
+
 (define measures (make-f32vector 32))
 (define alarms (make-u8vector 10))
-(define enablings (make-u8vector 16))
-(define prms (make-f32vector 24))
+(define enablings (make-u8vector 16))   ; channels, commands, ded, ded,
+                                        ; aux, aux, vacuum, vacuum
+                                        ; channels, commands, ded, ded,
+                                        ; aux, aux, vacuum, vacuum
+
+(define prms (make-f32vector 24))       ; final setpoint, current setpoint
+                                        ; slope (8x)
 (define timestamp #f)
+
+(define (get-measure i)
+  (f32vector-ref mesures i))
+
+(define (get-dedicated-contacts)
+  (u8vector-ref enablings 12)) ; 13?
+
+(define (get-auxiliary-contacts)
+  (u8vector-ref enablings 14)) ; 15?
+
+(define (get-final-setpoint i)
+  (f32vector-ref prms (* i 3)))
+
+(define (get-current-setpoint i)
+  (f32vector-ref prms (+ 1 (* i 3))))
+
+(define (get-slope i)
+  (f32vector-ref prms (+ 2 (* i 3))))
 
 (define measures-mutex (make-mutex))
 
