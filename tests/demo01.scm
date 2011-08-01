@@ -7,10 +7,7 @@
 ;
 ; TODO:
 ;
-; - test database inserts
-; - dynamically select measure to be saved
 ; - check alarms
-; - insert parameters into database
 ; - add function to write parameters and contacts
 
 (##namespace ("demo01#"))
@@ -24,6 +21,7 @@
    response-date)
   ("json#" json-write json-read)
   ("sqlite3#" sqlite3)
+  ("binary-io#" read-ieee-float32)
   ("fetchwrite#" fetch/apply)
   ("kws#" kws get-static get-file *server-root*)
   ("sessions#" make-session-builder valid-session session-id session-user
@@ -33,11 +31,30 @@
 ; Params
 
 
+; Fetch-write parameters
+
+(define datasource-address (make-parameter "localhost"))
+(define fetch-port-number (make-parameter 2000))
+
 ; Write on db each SAVE-PERIOD times.
 
 (define save-period (make-parameter 5)) 
 
+; Number of channels [1,6]
+
+(define n-channels (make-parameter 6))
+
+
 ; Utilities
+
+(define (read-ieee-f32vector n port)
+  (let ((res (make-f32vector n)))
+    (do ((i 0 (+ i 1)))
+      ((= i n) res)
+      (f32vector-set! res i (read-ieee-float32 port 'big-endian)))))
+
+(define (current-seconds)
+  (inexact->exact (round (time->seconds (current-time)))))
 
 (define (post-value name)
   (and-let* ((query (request-query (current-request)))
@@ -77,7 +94,7 @@
 (define timestamp #f)
 
 (define (get-measure i)
-  (f32vector-ref mesures i))
+  (f32vector-ref measures i))
 
 (define (get-active-channels)
   (let ((channels-mask (u8vector-ref enablings 8)))
@@ -109,21 +126,26 @@
   (set! timestamp (time->seconds (current-time))))
 
 (define (save-current-state)
-  (let ((db (make-db-handler (string-append (*server-root*) "/" (dbname))))
-	(q (with-output-to-string "INSERT INTO measures VALUES ("
+  (let ((db (make-dbhandler (string-append (*server-root*) "/" (dbname))))
+	(q (with-output-to-string "INSERT INTO history VALUES ("
+	    (lambda ()
+	     (print (current-seconds) ",")
 	     (do ((i 0 (+ i 1)))
-	       ((= i 6) '())
-	       (print (get-measure i) ","))
+	      ((= i (n-channels)) '())
+	      (print (get-measure i) ",")
+	      (print (get-final-setpoint i) ",")
+	      (print (get-current-setpoint i) ",")
+	      (print (get-slope i) ","))
 	     (print (get-dedicated-contacts) ",")
-	     (print (get-auxiliary-contacts) ")"))))
-    ((db-handler-run db) values "" q)
-    ((db-handler-close db))))
+	     (print (get-auxiliary-contacts) ")")))))
+    ((dbhandler-run db) values "" q)
+    ((dbhandler-close db))))
 
 
-(define (update)
-  (mutex-lock! fw-mutex #f #f)
-  (fetch/apply 62 0 250 read-db fetch-port)
-  (mutex-unlock! fw-mutex))
+;(define (update)
+;  (mutex-lock! fw-mutex #f #f)
+;  (fetch/apply 62 0 250 read-db fetch-port)
+;  (mutex-unlock! fw-mutex))
 
 (define update
   (let ((counter 0))
@@ -132,7 +154,8 @@
         (fetch/apply 62 0 250 read-db fetch-port))
       (set! counter (+ 1 counter))
       (when (= counter (save-period))
-	(save-current-state)
+	(with-mutex db-mutex
+	  (save-current-state))
 	(set! counter 0)))))
 
 
@@ -151,7 +174,7 @@
 
 ;;; Database handling
 
-(define dbname (make-parameter "plantmaster.sqlite"))
+(define dbname (make-parameter "demo01.sqlite"))
 
 (define-type dbhandler
   constructor: %make-dbhandler
@@ -180,10 +203,11 @@
     (and-let* ((q (uri-query (request-uri (current-request))))
 	       (t (assoc "table" q))
 	       (table (cdr t)))
+     (with-mutex db-mutex
       (let ((db (make-dbhandler (string-append (*server-root*) "/" (dbname)))))
         ((dbhandler-run db) display-row ""
          (string-append "SELECT * FROM " table))
-        ((dbhandler-close db))))))
+        ((dbhandler-close db)))))))
 
 (table-set! pages "/status"
             (lambda ()
@@ -393,7 +417,7 @@
                        `((dedicated . #x00000000)
                          (auxiliaries . #x00000000))))))))
 
-(define alarms
+(define active-alarms
   (list->table
     `((temperature . (0 100))
       (pressure . (0 100)))))
@@ -404,7 +428,7 @@
               (let ((name (get-value "name")))
                 (json-write
                   (list->table
-                    `((cycle . ,cycle) (alarms . ,alarms)))))))
+                    `((cycle . ,cycle) (alarms . ,active-alarms)))))))
 
 (table-set! pages "/cycles/save"
             (lambda ()
