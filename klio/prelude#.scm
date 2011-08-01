@@ -9,14 +9,6 @@
   identity
   const
   compose
-  when
-  unless
-  inc!
-  dec!
-  push!
-  pop!
-  assert
-  assure
   str
   cout
   cerr
@@ -28,7 +20,21 @@
   char-newline
   parser-error
   split
-  memoize))
+  memoize
+
+  with-gensyms
+  when
+  unless
+  inc!
+  dec!
+  push!
+  pop!
+  assert
+  and-let*
+  cut
+  cute
+  with-mutex
+))
 
 
                                         ; Macro utils
@@ -41,10 +47,10 @@
                                         ; Control
 
 (define-macro (when test . body)
-  `(if ,test ,@body))
+  `(if ,test (begin ,@body)))
 
 (define-macro (unless test . body)
-  `(if (not ,test) ,@body))
+  `(if (not ,test) (begin ,@body)))
 
 
                                         ; Mutations
@@ -158,10 +164,11 @@
                                        ; Simple mutex handlings.
 
 (define-macro (with-mutex mutex . body)
-  (with-gensyms (m r)
+  (let ((m (gensym))
+        (r (gensym)))
     `(let ((,m ,mutex))
        (mutex-lock! ,m #f #f)
        (let ((,r (begin ,@body)))
-	 (mutex-unlock! ,m)
+         (mutex-unlock! ,m)
 	 ,r))))
 
