@@ -7,8 +7,11 @@
 ;
 ; TODO:
 ;
+; - check if offset and length of data passed through fetch-write are expressed
+;   in 16-bit words, as it seems from specification, or the length is in
+;   bytes as it seem from some configurations.
 ; - check alarms
-; - add function to write parameters and contacts
+; - test functions to write parameters and contacts
 
 (##namespace ("demo01#"))
 (##include "~~lib/gambit#.scm")
@@ -22,7 +25,7 @@
   ("json#" json-write json-read)
   ("sqlite3#" sqlite3)
   ("binary-io#" read-ieee-float32)
-  ("fetchwrite#" fetch/apply)
+  ("fetchwrite#" fetch/apply write-db)
   ("kws#" kws get-static get-file *server-root*)
   ("sessions#" make-session-builder valid-session session-id session-user
    start-session-manager stop-session-manager))
@@ -35,6 +38,8 @@
 
 (define datasource-address (make-parameter "localhost"))
 (define fetch-port-number (make-parameter 2000))
+(define write-port-number (make-parameter 2001))
+
 
 ; Write on db each SAVE-PERIOD times.
 
@@ -78,6 +83,10 @@
 (define fetch-port
   (open-tcp-client
     `(server-address: ,(datasource-address) port-number: ,(fetch-port-number))))
+
+(define write-port
+  (open-tcp-client
+    `(server-address: ,(datasource-address) port-number: ,(write-port-number))))
 
 
 ; Data map
@@ -170,6 +179,19 @@
 	  (loop (+ x dt)))))))
 
 
+; Assume that significant values are the leftmost bits.
+
+(define (write-contacts ded aux)
+  (write-db 62 1002 4 (u8vector ded 0 aux 0) write-port))
+
+(define (write-setpoints-and-slopes data)
+  (write-db 62 1008 64
+	    (with-output-to-u8vector (make-u8vector 64)
+	      (lambda ()
+		(for-each write-ieee-float32 data)))
+	    write-port))
+
+
 
 
 ;;; Database handling
@@ -208,6 +230,14 @@
         ((dbhandler-run db) display-row ""
          (string-append "SELECT * FROM " table))
         ((dbhandler-close db)))))))
+
+(table-set! pages "/contacts"
+  (lambda ()
+    (and-let* ((q (uri-query (request-uri (current-request))))
+	       (ded (or (assoc "ded" q) (get-dedicated-contacts)))
+	       (aux (or (assoc "aux" q) (get-auxiliary-contacts))))
+      (write-contacts ded aux))))
+
 
 (table-set! pages "/status"
             (lambda ()
