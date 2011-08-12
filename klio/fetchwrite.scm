@@ -5,7 +5,7 @@
 ;;
 ;; Author: Marco Benelli <mbenelli@yahoo.com>
 ;;
-;; The fecth-write protocol is used to communicate with Siemens S5/S7 plcs.
+;; The fetch-write protocol is used to communicate with Siemens S5/S7 plcs.
 
 (##namespace ("fetchwrite#"))
 (##include "~~lib/gambit#.scm")
@@ -135,28 +135,31 @@
     0))
 
 
+
+; Send a command and handle the response.
+; The offeset and length unit is 16-bit word.
+
 (define (write-db db offset len data #!optional (p (current-output-port)))
   (let ((req-header (make-request-header OPCODE-WRITE DB db offset len))
         (res-header (make-u8vector 16)))
     (write-subu8vector req-header 0 (u8vector-length req-header) p)
-    (write-subu8vector data 0 (u8vector-length data) p)
+    (write-subu8vector data 0 (* 2 len) p)
     (force-output p)
     (read-subu8vector res-header 0 (u8vector-length res-header) p)))
 
 (define (fetch-db db offset len #!optional (p (current-output-port)))
   (let ((req-header (make-request-header OPCODE-FETCH DB db offset len))
         (res-header (make-u8vector 16))
-        (res (make-u8vector len)))
+        (res (make-u8vector (* 2 len))))
     (write-subu8vector req-header 0 (u8vector-length req-header) p)
     (force-output p)
     (read-subu8vector res-header 0 (u8vector-length res-header) p)
-    (read-subu8vector res 0 len p)
+    (read-subu8vector res 0 (u8vector-length res) p)
     res))
 
 (define (fetch/apply db offset len fn #!optional (p (current-output-port)))
   (let ((req-header (make-request-header OPCODE-FETCH DB db offset len))
-	(res-header (make-u8vector 16))
-	(res (make-u8vector len)))
+	(res-header (make-u8vector 16)))
     (write-subu8vector req-header 0 (u8vector-length req-header) p)
     (force-output p)
     (read-subu8vector res-header 0 (u8vector-length res-header) p)
