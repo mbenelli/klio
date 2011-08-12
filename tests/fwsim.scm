@@ -11,6 +11,7 @@
 ;; TODO: check mutex
 
 (##include "~~lib/gambit#.scm")
+(##include "../klio/prelude#.scm")
 (##namespace ("fetchwrite#" OK OPCODE-WRITE OPCODE-FETCH make-response-header))
 
 
@@ -20,7 +21,7 @@
 (define sample-data
   '#u8(
 
-       ; Measures
+       ; Measures [0, 127]
 
        66 242 4 108
        67 159 74 131
@@ -55,16 +56,54 @@
        0 0 0 0
        0 0 0 0
 
-       ; Alarms 
+       ; Alarms [128, 137]
 
        0 0 0 0 0 0 0 0 0 0
 
        ; misc
 
-       9 0 0 141 0 0 11 232 0 0 0 0 0 0 0 0 67 22 0 0 0 0 0 0 64 64 0 0 66 72
-       0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-       0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-       0 0 0 0 0 0 0 0 0 0))
+       9      ; channel enablings          [138]
+       0      ; commands enablings         [139]
+       0 141  ; special contacts enablings [140, 141]
+       0 0    ; aux contacts enablings     [142, 143]
+       11 232 ; vacuum contacts enablings  [144, 145]
+       0      ; channel enablings          [146]
+       0      ; commands enablings         [147]
+       0 0    ; special contacts enablings [148, 149]
+       0 0    ; aux contacts enabling      [150, 151]
+       0 0    ; vacuum contacts enablings  [152, 153]
+
+       67 22 0 0 
+       0 0 0 0 
+       64 64 0 0
+
+       66 72 0 0 
+       0 0 0 0
+       0 0 0 0
+       
+       0 0 0 0
+       0 0 0 0
+       0 0 0 0
+       
+       0 0 0 0
+       0 0 0 0
+       0 0 0 0
+       
+       0 0 0 0
+       0 0 0 0
+       0 0 0 0
+       
+       0 0 0 0
+       0 0 0 0
+       0 0 0 0
+       
+       0 0 0 0
+       0 0 0 0
+       0 0 0 0
+       
+       0 0 0 0
+       0 0 0 0
+       0 0 0 0))
 
 (define buffer-mutex (make-mutex))
 
@@ -92,13 +131,15 @@
                   #!optional (p (current-output-port)))
   (let ((data (make-u8vector len)))
     (read-subu8vector data 0 len p)
+    (pp data)
+    (pp (subu8vector sample-data (* 2 offset) (* 2 (+ offset len))))
     (with-input-from-u8vector
       data
       (lambda ()
-        ;(mutex-lock! buffer-mutex #f #f)
-        (read-subu8vector sample-data offset (+ offset len))
-        ;(mutex-unlock! buffer-mutex)
-        ))
+        (with-mutex buffer-mutex
+          (read-subu8vector sample-data (* 2 offset) (* 2 (+ offset len))))))
+    (pp (subu8vector sample-data (* 2 offset) (* 2 (+ offset len))))
+    (force-output (current-error-port))
     (write-subu8vector (make-response-header OK) 0 16 p)
     (force-output p)))
 
@@ -106,17 +147,17 @@
 (define (fetch org-id db offset len #!optional (p (current-output-port)))
   (write-subu8vector (make-response-header OK) 0 16 p)
   (mutex-lock! buffer-mutex #f #f)
-  (write-subu8vector sample-data offset (+ offset len) p)
+  (write-subu8vector sample-data (* 2 offset) (* 2 (+ offset len)) p)
   (force-output p)
   (mutex-unlock! buffer-mutex))
 
 
 (define (serve-connection p)
   (let ((request (make-u8vector 16)))
-    (print (time->seconds (current-time)) " - Serving request ...")
+;    (print (time->seconds (current-time)) " - Serving request ...")
     (read-subu8vector request 0 16 p)
     (serve-request request p)
-    (println "done.")
+;    (println "done.")
     (serve-connection p)))
 
 (define (srv s)

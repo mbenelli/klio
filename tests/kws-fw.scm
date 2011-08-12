@@ -82,7 +82,7 @@
 
 
 (define (update)
-  (fetch/apply 62 0 250 read-db fetch-port))
+  (fetch/apply 62 0 125 read-db fetch-port))
 
 
 (define update-thread

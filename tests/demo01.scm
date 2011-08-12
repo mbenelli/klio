@@ -7,11 +7,7 @@
 ;
 ; TODO:
 ;
-; - check if offset and length of data passed through fetch-write are expressed
-;   in 16-bit words, as it seems from specification, or the length is in
-;   bytes as it seem from some configurations.
 ; - check alarms
-; - test functions to write parameters and contacts
 
 (##namespace ("demo01#"))
 (##include "~~lib/gambit#.scm")
@@ -110,10 +106,10 @@
     (map (lambda (i) (bit-set? i channels-mask)) '(0 1 2 3 4 5 6 7))))
 
 (define (get-dedicated-contacts)
-  (u8vector-ref enablings 12)) ; 13?
+  (u8vector-ref enablings 10)) ; 11?
 
 (define (get-auxiliary-contacts)
-  (u8vector-ref enablings 14)) ; 15?
+  (u8vector-ref enablings 12)) ; 13?
 
 (define (get-final-setpoint i)
   (f32vector-ref prms (* i 3)))
@@ -151,16 +147,11 @@
     ((dbhandler-close db))))
 
 
-;(define (update)
-;  (mutex-lock! fw-mutex #f #f)
-;  (fetch/apply 62 0 250 read-db fetch-port)
-;  (mutex-unlock! fw-mutex))
-
 (define update
   (let ((counter 0))
     (lambda ()
       (with-mutex fw-mutex
-        (fetch/apply 62 0 250 read-db fetch-port))
+        (fetch/apply 62 0 125 read-db fetch-port))
       (set! counter (+ 1 counter))
       (when (= counter (save-period))
 	(with-mutex db-mutex
@@ -182,10 +173,10 @@
 ; Assume that significant values are the leftmost bits.
 
 (define (write-contacts ded aux)
-  (write-db 62 1002 4 (u8vector ded 0 aux 0) write-port))
+  (write-db 62 74 2 (u8vector ded 0 aux 0) write-port)) ; 501
 
 (define (write-setpoints-and-slopes data)
-  (write-db 62 1008 64
+  (write-db 62 75 32 ; 504
 	    (with-output-to-u8vector (make-u8vector 64)
 	      (lambda ()
 		(for-each write-ieee-float32 data)))
@@ -234,9 +225,13 @@
 (table-set! pages "/contacts"
   (lambda ()
     (and-let* ((q (uri-query (request-uri (current-request))))
-	       (ded (or (assoc "ded" q) (get-dedicated-contacts)))
-	       (aux (or (assoc "aux" q) (get-auxiliary-contacts))))
-      (write-contacts ded aux))))
+	       (ded (or (assoc "ded" q) `("ded" . ,(get-dedicated-contacts))))
+	       (aux (or (assoc "aux" q) `("aux" . ,(get-auxiliary-contacts)))))
+      (pp ded)
+      (pp aux)
+      (write-contacts
+	(with-input-from-string (cdr ded) read)
+	(with-input-from-string (cdr aux) read)))))
 
 
 (table-set! pages "/status"
@@ -247,15 +242,16 @@
                     (time . ,(response-date))
                     (status . "running")
                     (channels . ,(list->table
-                                   '(("ch0" . 37)
-                                     ("ch1" . 1)
-                                     ("ch2" . 1)
-                                     ("ch3" . 50)
-                                     ("ch4" . 1)
-                                     ("ch5" . 1))))
+                                   `(("ch0" . ,(get-measure 0))
+                                     ("ch1" . ,(get-measure 1))
+                                     ("ch2" . ,(get-measure 2))
+                                     ("ch3" . ,(get-measure 3))
+                                     ("ch4" . ,(get-measure 4))
+                                     ("ch5" . ,(get-measure 5)))))
                     (contacts . ,(list->table
-                                   '(("dedicated" . #b00000000)
-                                     ("auxiliaries" . #b00000000))))
+                                   `(("dedicated" . ,(get-dedicated-contacts))
+                                     ("auxiliaries"
+				      . ,(get-auxiliary-contacts)))))
                     (notifies . (,(list->table
                                     '((msg . "Notify 1")
                                       (severity . 1)))
