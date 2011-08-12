@@ -2,7 +2,7 @@
 
 export KLIO_PATH=../klio
 
-gsi -:d- \
+gsi -:da- \
 $KLIO_PATH/prelude \
 $KLIO_PATH/lists \
 $KLIO_PATH/base64 \
