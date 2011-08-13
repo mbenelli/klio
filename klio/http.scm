@@ -934,9 +934,58 @@
           ))
       )))
 
-; (define reply-html
-;   (lambda (html)
-;     (reply (lambda () (write-html html)))))
+
+; Chunked reply
+;
+; FIXME: this is an instable interface.
+; A more evoluted interface should be a single function that
+; provides a way to call generators of single chunks.
+
+(define send-chunked-reply-header
+  (lambda (#!optional (attributes '()))
+    (let* ((request (current-request))
+           (connection (request-connection request))
+           (version (request-version request))
+           (to-be-closed (not (keep-alive? request)))
+           (eol "\r\n"))
+      (print port: connection
+        (list
+          version " 200 OK" eol
+          "Server: Klio Web Server" eol
+          "Date: " (response-date) eol
+          "Transfer-Encoding: chunked" eol
+          (if to-be-closed
+              (string-append "Connection: close" eol)
+              "")))
+      (for-each
+        (lambda (x) (print port: connection (car x) ": " (cdr x) eol))
+        attributes)
+      (print port: connection eol))))
+
+
+(define send-chunk
+  (lambda (thunk)
+    (let* ((request (current-request))
+           (connection (request-connection request)))
+      (let* ((message (with-output-to-u8vector '#u8() thunk))
+             (len (u8vector-length message)))
+        (print port: connection (number->string len 16) "\r\n")
+        (write-subu8vector message 0 len connection)
+        (print port: connection "\r\n")))))
+
+
+(define send-last-chunk
+  (lambda ()
+    (let* ((request (current-request))
+           (connection (request-connection request)))
+      (print port: connection "0\r\n\r\n")
+      (cond
+        ((not (keep-alive? request))
+         (close-port connection))
+        (else (force-output connection)
+              (serve-connection (request-server request) connection))))))
+
+
 
 (define current-request
   (lambda ()
