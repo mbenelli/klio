@@ -913,26 +913,12 @@
                  (u8vector-length message)
                  port)))))
 
-      (define debug? #f)
-
-      (if (not debug?)
-          (generate-reply connection)
-          (let ((output
-                 (call-with-output-u8vector
-                  '#u8()
-                  (lambda (port) (generate-reply port)))))
-            (write-subu8vector output 0 (u8vector-length output) ##stdout-port)
-            (force-output ##stdout-port)
-            (write-subu8vector output 0 (u8vector-length output) connection)))
-
-      ;;(close-port connection)
+      (generate-reply connection)
       (cond
         (to-be-closed
           (close-port connection))
         (else (force-output connection)
-          (serve-connection (request-server request) connection)
-          ))
-      )))
+          (serve-connection (request-server request) connection))))))
 
 
 ; Chunked reply
