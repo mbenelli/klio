@@ -10,7 +10,9 @@
 (##namespace ("http#"))
 (##include "~~lib/gambit#.scm")
 (##include "http#.scm")
-(##namespace ("datetime#" current-date date->string))
+(##namespace
+  ("strings#" string-contains-ci)
+  ("datetime#" current-date date->string))
 
 (declare
   (standard-bindings)
@@ -724,7 +726,7 @@
     (cond
       ((not (server-threaded? (request-server request))) #f)
       ((assoc "Connection" (request-attributes request))
-       => (lambda (x) (string-ci=? "keep-alive" (cdr x))))
+       => (lambda (x) (string-contains-ci (cdr x) "keep-alive")))
       (else #t))))
 
 (define make-http-server

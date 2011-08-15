@@ -5,6 +5,7 @@ export KLIO_PATH=../klio
 gsi -:da- \
 $KLIO_PATH/prelude \
 $KLIO_PATH/lists \
+$KLIO_PATH/strings \
 $KLIO_PATH/base64 \
 $KLIO_PATH/datetime \
 $KLIO_PATH/http \
