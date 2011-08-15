@@ -907,13 +907,15 @@
 		  (lambda (x) (print port: port (car x) ": " (cdr x) eol))
 		  attributes)
 		(print port: port eol)
-                (write-subu8vector
-                 message
-                 0
-                 (u8vector-length message)
-                 port)))))
+                (if (not (string=? (request-method request) "HEAD"))
+                    (write-subu8vector
+                      message
+                      0
+                      (u8vector-length message)
+                      port))))))
 
       (generate-reply connection)
+
       (cond
         (to-be-closed
           (close-port connection))

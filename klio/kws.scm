@@ -107,5 +107,6 @@
                          port-number: port-number
                          threaded?: multithread
                          GET: (or dispatcher get-static)
+                         HEAD: (or dispatcher get-static)
                          POST: (or dispatcher get-static)))))
 
