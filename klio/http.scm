@@ -10,6 +10,7 @@
 (##namespace ("http#"))
 (##include "~~lib/gambit#.scm")
 (##include "http#.scm")
+(##include "prelude#.scm")
 (##namespace
   ("strings#" string-contains-ci)
   ("datetime#" current-date date->string))
@@ -784,24 +785,32 @@
       (loop))))
 
 
-(define (send-error connection text)
-  (write text connection)
+(define (send-error version connection text)
+  (print port: connection
+    (or
+      version
+      (and-let* ((request (current-request))
+                 (version (request-version request)))
+        version)
+      "HTTP/1.1")
+    #\space text "\r\n\r\n")
   (close-port connection))
 
 
-(define (method-not-implemented-error connection)
-  (send-error connection "501 Method not implemented"))
+(define (method-not-implemented-error connection #!optional (version #f))
+  (send-error version connection "501 Method not implemented"))
 
 
 (define unimplemented-method
   (lambda ()
     (let* ((request (current-request))
+           (version (request-version request))
            (connection (request-connection request)))
-      (method-not-implemented-error connection))))
+      (method-not-implemented-error connection version))))
 
 
-(define (bad-request-error connection)
-  (send-error connection "400 Bad Request"))
+(define (bad-request-error connection #!optional (version #f))
+  (send-error version connection "400 Bad Request"))
 
 
 (define (reply-with-status-code text #!optional (headers '()))
@@ -1035,11 +1044,18 @@
                    (define handle-version
                      (lambda (version)
                        (case version
-                         ((HTTP/1.0 HTTP/1.1)
+                         ((HTTP/1.0)
                           (let ((attributes (read-header connection)))
                             (if attributes
                                 (handle-request version attributes)
-                                (bad-request-error connection))))
+                                (bad-request-error connection version))))
+                         ((HTTP/1.1)
+                          (let ((attributes (read-header connection)))
+                            (cond
+                              (attributes (if (assoc "Host" attributes)
+                                              (handle-request version attributes)
+                                              (bad-request-error connection version)))
+                              (else (bad-request-error connection version)))))
                          ((#f)
                           ; this is an HTTP/0.9 request
                           (handle-request 'HTTP/0.9 '()))
@@ -1093,9 +1109,7 @@
                                 (handle-version
                                  (vector-ref version-table
                                              (+ version-index 1)))
-                                (bad-request-error connection)))))))
-
-                (method-not-implemented-error connection)))))))
+                                (bad-request-error connection)))))))))))))
 
 (define version-table
   (make-token-table
