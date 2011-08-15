@@ -14,12 +14,7 @@ make-http-server
 http-server-start!
 reply-unbuffered
 reply
-
-; FIXME: improve the interface for chuncked responses
-
-send-chunked-reply-header
-send-chunk
-send-last-chunk
+reply-chunked
 
 current-request
 

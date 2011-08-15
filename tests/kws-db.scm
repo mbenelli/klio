@@ -8,7 +8,7 @@
 (##include "../klio/prelude#.scm")
 (##namespace
   ("http#" reply current-request request-uri uri-query uri-path
-   send-chunked-reply-header send-chunk send-last-chunk)
+   reply-chunked)
   ("sqlite3#" sqlite3)
   ("kws#" get-static *server-root*))
 
@@ -31,9 +31,6 @@
   (println (map (lambda (x) (cons x #\space)) cols))
   (values #t ""))
 
-(define (send-row seed . cols)
-  (send-chunk (lambda () (println (map (lambda (x) (cons x #\space)) cols))))
-  (values #t ""))
 
 ;;; Pages
 
@@ -50,22 +47,27 @@
         ((dbhandler-close db))))))
 
 (table-set! pages "/chunks"
-  (lambda ()
-    (and-let* ((q (uri-query (request-uri (current-request))))
-               (t (assoc "table" q))
-               (table (cdr t)))
-      (let ((db (make-dbhandler (string-append (*server-root*) (dbname)))))
-        ((dbhandler-run db) send-row "" (string-append "SELECT * FROM " table))
-        ((dbhandler-close db))))))
+  (lambda (send-chunks)
+    (let ((send-row (lambda (seed . cols)
+                      (send-chunks
+                        (lambda ()
+                          (println (map (lambda (x) (cons x #\space)) cols))))
+                      (values #t ""))))
+      (and-let* ((q (uri-query (request-uri (current-request))))
+                 (t (assoc "table" q))
+                 (table (cdr t)))
+        (let ((db (make-dbhandler (string-append (*server-root*) (dbname)))))
+          ((dbhandler-run db) send-row "" (string-append "SELECT * FROM " table))
+          ((dbhandler-close db)))))))
 
 
 (define (dispatcher)
   (let ((path (uri-path (request-uri (current-request)))))
     (cond
+      
       ((string=? path "/chunks")
-       (send-chunked-reply-header)
-       ((table-ref pages "/chunks"))
-       (send-last-chunk))
+       (reply-chunked (table-ref pages "/chunks")))
+      
       ((table-ref pages path #f)
        => (lambda (x)
             (reply x)))

@@ -921,11 +921,11 @@
           (serve-connection (request-server request) connection))))))
 
 
-; Chunked reply
-;
-; FIXME: this is an instable interface.
-; A more evoluted interface should be a single function that
-; provides a way to call generators of single chunks.
+;; Chunked reply
+;;
+;; Building blocks.
+;; These function are not local to REPLY-CHUNKED for testing and
+;; experimenting purposes.
 
 (define send-chunked-reply-header
   (lambda (#!optional (attributes '()))
@@ -971,6 +971,13 @@
         (else (force-output connection)
               (serve-connection (request-server request) connection))))))
 
+;; Interface.
+
+(define reply-chunked
+  (lambda (thunk #!optional (attributes '()))
+    (send-chunked-reply-header)
+    (thunk send-chunk)
+    (send-last-chunk)))
 
 
 (define current-request
