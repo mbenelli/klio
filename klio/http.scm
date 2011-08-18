@@ -21,6 +21,10 @@
   (block)
   (not safe))
 
+;; Parameters
+
+(define max-connections (make-parameter 200))
+
 ;==============================================================================
 
 ; Token tables.
@@ -771,16 +775,19 @@
 (define accept-connections
   (lambda (hs server-port)
     (let loop ()
-      (let ((connection
-              (read server-port)))
+      (let ((connection (read server-port))
+            (n-active (length (thread-group->thread-list
+                                (thread-thread-group (current-thread))))))
         (if (server-threaded? hs)
-            (let ((dummy-port (open-dummy)))
-              (parameterize ((current-input-port dummy-port)
-                             (current-output-port dummy-port))
-                (thread-start!
-                  (make-thread
-                    (lambda ()
-                      (serve-connection hs connection))))))
+            (if (< n-active (max-connections))
+                (let ((dummy-port (open-dummy)))
+                  (parameterize ((current-input-port dummy-port)
+                                 (current-output-port dummy-port))
+                    (thread-start!
+                      (make-thread
+                        (lambda ()
+                          (serve-connection hs connection))))))
+                (server-unavailable connection))
             (serve-connection hs connection)))
       (loop))))
 
@@ -807,6 +814,10 @@
            (version (request-version request))
            (connection (request-connection request)))
       (method-not-implemented-error connection version))))
+
+
+(define (service-unavailable-error connection)
+  (send-error #f connection "503 Service Unavailable"))
 
 
 (define (bad-request-error connection #!optional (version #f))
@@ -885,7 +896,7 @@
     (cond
       (to-be-closed (close-port connection))
       (else (force-output connection)
-            (serve-connection (request-server request) connection)))))
+        (serve-connection (request-server request) connection)))))
 
 (define reply
   (lambda (thunk #!optional (attributes '())
