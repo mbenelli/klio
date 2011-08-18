@@ -18,12 +18,17 @@
 
 (define *server-root* (make-parameter (current-directory)))
 
+(define input-file-buffer-size 4096)
 
 (define (static-content path)
-  (let* ((p (open-input-file path))
-         (f (read-line p #f)))
-    (close-input-port p)
-    (display f)))
+  (let ((p (open-input-file `(path: ,path buffering: #f)))
+        (buff (make-u8vector input-file-buffer-size)))
+    (let loop ((n (read-subu8vector buff 0 input-file-buffer-size p)))
+      (if (zero? n)
+          (close-input-port p)
+          (begin
+            (write-subu8vector buff 0 n)
+            (loop (read-subu8vector buff 0 input-file-buffer-size p)))))))
 
 ;;;
 
@@ -72,6 +77,7 @@
 	      ("Last-Modified" . ,(last-modified path)))
             ))))))
 
+
 (define get-file
   (lambda (path attributes)
     (with-exception-catcher
@@ -83,9 +89,9 @@
 	           (path-strip-trailing-directory-separator (*server-root*))
 		   path)))
 	  (reply (lambda () (static-content p))
-                 (append `(("Content-Type" . ,(mime p))
-                           ("Last-Modified" . ,(last-modified p)))
-                         attributes)))))))
+            (append `(("Content-Type" . ,(mime p))
+                      ("Last-Modified" . ,(last-modified p)))
+              attributes)))))))
 
 
 (define (kws #!key
