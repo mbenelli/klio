@@ -787,7 +787,7 @@
                       (make-thread
                         (lambda ()
                           (serve-connection hs connection))))))
-                (server-unavailable connection))
+                (service-unavailable-error connection))
             (serve-connection hs connection)))
       (loop))))
 
