@@ -10,6 +10,7 @@ something doesn't work.
 
 base64
 http
+simple-sort
 
 
 * Oleg Kyselyov
@@ -25,6 +26,7 @@ shift-reset
 * Alex Shinn
 
 irregex
+binary-io
 
 
 * Olin Shivers
