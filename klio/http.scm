@@ -941,7 +941,8 @@
       (cond
         (to-be-closed
           (close-port connection))
-        (else (force-output connection)
+        (else
+          (force-output connection)
           (serve-connection (request-server request) connection))))))
 
 
