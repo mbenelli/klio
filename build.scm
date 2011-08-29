@@ -14,6 +14,7 @@
     datetime
     format
     vectors
+    simple-sort
     shift-reset
 
     queue
@@ -32,6 +33,9 @@
     http-auth
     sessions
     cgi
+
+    modbus
+    fetchwrite
     ))
 
 (parameterize ((current-directory dir))
