@@ -149,7 +149,7 @@ C-END
                              (if (not continue?)
                                  res
                                  (db-fold-left db fn res query))))))
-      ((sqlite-busy? x) #f)
+      ((sqlite-busy? x) (raise "sqlite-busy"))
       (else (raise (sqlite3-errmsg db))))))
 
 
