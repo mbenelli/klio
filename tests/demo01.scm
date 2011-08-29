@@ -37,9 +37,15 @@
 (define write-port-number (make-parameter 2001))
 
 
-; Write on db each SAVE-PERIOD times.
+; Read data each ACQUISITION-PERIOD seconds.
 
-(define save-period (make-parameter 5)) 
+(define acquisition-period (make-parameter 2))
+
+
+; Write on db each SAVE-PERIOD times (multiply for ACQUISITION-PERIOD).
+
+(define save-period (make-parameter 5))
+
 
 ; Number of channels [1,6]
 
@@ -163,7 +169,7 @@
   (make-thread
     (lambda ()
       (let ((start (time->seconds (current-time)))
-	    (dt 2))
+	    (dt (acquisition-period)))
 	(let loop ((x dt))
 	  (thread-sleep! (seconds->time (+ x start)))
 	  (update)
