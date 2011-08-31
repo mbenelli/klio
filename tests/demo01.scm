@@ -7,7 +7,7 @@
 ;;
 ;; TODO:
 ;;
-;; - check alarms
+;; - complete responses
 
 (##namespace ("demo01#"))
 (##include "~~lib/gambit#.scm")
@@ -15,6 +15,7 @@
 
 
 (##namespace
+  ("lists#" lset-difference)
   ("http#" reply current-request request-connection request-query
    request-attributes request-uri uri-path uri-query see-other
    response-date)
@@ -131,7 +132,17 @@
                                         ; -- Alarms --
 
 (define active-alarms '())
-(define alarm-mutex (make-mutex))
+
+(define (init-active-alarms-from-db)
+  (with-mutex alarms-mutex
+    (set! active-alarms
+      (fold/query
+        (lambda (seed . cols)
+          (values #t (cons (car cols) seed)))
+        '()
+        "SELECT id FROM alarms WHERE end IS NULL"))))
+
+(define alarms-mutex (make-mutex))
 
                                         ; List of alarm identifiers.
                                         ; Assume that alarms are represented
@@ -147,7 +158,7 @@
         ((= i (u8vector-length alarms)) active-alarms)
       (if (not (zero? (u8vector-ref alarms i)))
           (do ((j 0 (+ j 1)))
-              ((= i 8) ,done)
+              ((= j 8) 'done)
             (if (bit-set? j (u8vector-ref alarms i))
                 (push! (vector-ref (vector-ref alarmlist 1) j)
                   active-alarms)))))))
@@ -157,7 +168,14 @@
   (let* ((current-alarms (check-alarms alarms))
          (turned-on (lset-difference eq? current-alarms active-alarms))
          (turned-off (lset-difference eq? active-alarms current-alarms)))
-    (save-alarms turned-on turned-off)))
+    (pp "checking alarms")
+    (pp active-alarms)
+    (pp turned-on)
+    (pp turned-off)
+    (with-mutex alarms-mutex
+      (set! active-alarms current-alarms))
+    (save-alarms turned-on turned-off)
+    ))
 
 (define (save-alarms on off)
   (unless (null? off)
@@ -165,15 +183,16 @@
       (lambda (seed . cols) (values #t seed))
       '()
       (with-output-to-string
-        "UPDATE alarms SET end=datetime('now') WHERE end=NULL AND ( "
+        "UPDATE alarms SET end=strftime('%s','now','localtime')"
         (lambda ()
+          (print " WHERE end IS NULL AND (")
           (print
             (intersperse
               (map
                 (lambda (x)
                   (with-output-to-string
                     "id="
-                    (lambda (y) (display y))))
+                    (lambda () (print #\' x #\'))))
                 off)
               " OR "))
           (print ")")))))
@@ -186,7 +205,7 @@
           (with-output-to-string
             "INSERT INTO alarms (id, start, end) VALUES ("
             (lambda ()
-              (print x ", datetime('now'), NULL)")))))
+              (print #\' x #\' ", strftime('%s','now','localtime'), NULL)")))))
       on)))
 
 
@@ -225,8 +244,7 @@
     (lambda ()
       (with-mutex fw-mutex
         (fetch/apply 62 0 125 read-db fetch-port))
-      (with-mutex alarm-mutex
-        (set! current-alarms (check-alarms alarms)))
+      (update-alarms)
       (set! counter (+ 1 counter))
       (when (= counter (save-period))
 	(with-mutex db-mutex
@@ -279,13 +297,14 @@
 
 (define (fold/query fn seed query)
   (let* ((db (make-dbhandler dbfilename))
-         (res ((dbhandler-run fn seed query))))
+         (res ((dbhandler-run db) fn seed query)))
     ((dbhandler-close db))
     res))
 
 (define (display-row seed . cols)
   (println (map (lambda (x) (cons x #\space)) cols))
   (values #t ""))
+
 
 
                                         ; == Pages ==
@@ -335,7 +354,7 @@
                                    `(("dedicated" . ,(get-dedicated-contacts))
                                      ("auxiliaries"
 				      . ,(get-auxiliary-contacts)))))
-                    (notifies . ,(with-mutex alarm-mutex
+                    (notifies . ,(with-mutex alarms-mutex
                                    (map (lambda (x)
                                           (list->table
                                             `((msg . ,x)
@@ -522,18 +541,16 @@
                        `((dedicated . #x00000000)
                          (auxiliaries . #x00000000))))))))
 
-(define active-alarms
-  (list->table
-    `((temperature . (0 100))
-      (pressure . (0 100)))))
-
 
 (table-set! pages "/cycles/load"
             (lambda ()
               (let ((name (get-value "name")))
                 (json-write
                   (list->table
-                    `((cycle . ,cycle) (alarms . ,active-alarms)))))))
+                    `((cycle . ,cycle)
+                      (alarms . ,(list->table
+                                   `((temperature . (0 100))
+                                     (pressure . (0 100)))))))))))
 
 (table-set! pages "/cycles/save"
             (lambda ()
