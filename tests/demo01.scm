@@ -1,13 +1,13 @@
-; demo01.scm - An example of a scada system
-;
-; Copyright (c) 2008-2010 by Marco Benelli <mbenelli@yahoo.com>
-; All Rights Reserved.
+;; demo01.scm - An example of a scada system
+;;
+;; Copyright (c) 2008-2010 by Marco Benelli <mbenelli@yahoo.com>
+;; All Rights Reserved.
 
-; Warning: this example isn't working yet.
-;
-; TODO:
-;
-; - check alarms
+;; Warning: this example isn't working yet.
+;;
+;; TODO:
+;;
+;; - check alarms
 
 (##namespace ("demo01#"))
 (##include "~~lib/gambit#.scm")
@@ -27,32 +27,34 @@
    start-session-manager stop-session-manager))
 
 
-; Params
+                                        ; == Params ==
 
 
-; Fetch-write parameters
+                                        ; Fetch-write parameters
 
 (define datasource-address (make-parameter "localhost"))
 (define fetch-port-number (make-parameter 2000))
 (define write-port-number (make-parameter 2001))
 
 
-; Read data each ACQUISITION-PERIOD seconds.
+                                        ; Read data each ACQUISITION-PERIOD
+                                        ; seconds.
 
 (define acquisition-period (make-parameter 2))
 
 
-; Write on db each SAVE-PERIOD times (multiply for ACQUISITION-PERIOD).
+                                        ; Write on db each SAVE-PERIOD times
+                                        ; (multiply for ACQUISITION-PERIOD).
 
 (define save-period (make-parameter 5))
 
 
-; Number of channels [1,6]
+                                        ; Number of channels [1,6]
 
 (define n-channels (make-parameter 6))
 
 
-; Utilities
+                                        ; Utilities
 
 (define (read-ieee-f32vector n port)
   (let ((res (make-f32vector n)))
@@ -80,7 +82,7 @@
   (json-write (list->table `((succeeded . #f) (msg . ,msg)))))
 
 
-; Fetch Write
+                                        ; Fetch Write
 
 (define fetch-port
   (open-tcp-client
@@ -243,7 +245,8 @@
 	  (loop (+ x dt)))))))
 
 
-; Assume that significant values are the leftmost bits.
+                                        ; Assume that most significant values
+                                        ; are the leftmost bits.
 
 (define (write-contacts ded aux)
   (write-db 62 74 2 (u8vector ded 0 aux 0) write-port)) ; 501
@@ -258,7 +261,7 @@
 
 
 
-;;; Database handling
+                                        ; == Database handling ==
 
 (define dbname (make-parameter "demo01.sqlite"))
 (define dbfilename (string-append (*server-root*) "/" (dbname)))
@@ -285,11 +288,11 @@
   (values #t ""))
 
 
-;;; Pages
+                                        ; == Pages ==
 
 (define pages (make-table test: string=?))
 
-; REMOVEME
+                                        ; REMOVEME
 
 (table-set! pages "/select"
   (lambda ()
@@ -340,8 +343,7 @@
                                     (active-alarms)))))))))
 
 
-;;; Monitor
-
+                                        ; -- Monitor --
 
 (table-set! pages "/monitor/overview"
             (lambda ()
@@ -424,7 +426,7 @@
                     (v1 . ((0 0) (1 1) (2 4) (3 9))))))))
 
 
-;;; Test - Manual
+                                        ; -- Test - Manual --
 
 
 (define test-prms
@@ -466,7 +468,7 @@
                     (interval (post-value "interval")))
                 (success))))
 
-;;; Test - Program
+                                        ; -- Test - Program --
 
 (table-set! pages "/cycles/archieve"
             (lambda ()
@@ -548,7 +550,7 @@
                 (success))))
 
 
-;;; Archive
+                                        ; -- Archive --
 
 
 (table-set! pages "/archieve/test"
@@ -580,7 +582,9 @@
                       (description . "buh!")
                       (timestamp . ,(response-date))
                       (level . 1)))))))
-;;;
+
+
+                                        ; == Dispatcher ==
 
 (define (dispatch)
   (let* ((request (current-request))
