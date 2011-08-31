@@ -91,7 +91,7 @@
     `(server-address: ,(datasource-address) port-number: ,(write-port-number))))
 
 
-; Data map
+                                        ; == Data map ==
 
 (define measures (make-f32vector 32))
 (define alarms (make-u8vector 10))
@@ -126,6 +126,71 @@
 (define (get-slope i)
   (f32vector-ref prms (+ 2 (* i 3))))
 
+                                        ; -- Alarms --
+
+(define active-alarms '())
+(define alarm-mutex (make-mutex))
+
+                                        ; List of alarm identifiers.
+                                        ; Assume that alarms are represented
+                                        ; as bits.
+(define alarmlist
+  '#(#(a00 a01 a02 a03 a04 a05 a06 a07)
+      #(a10 a11 a12 a13 a14 a15 a16 a17)))
+
+                                        ; Check active alarms
+(define (check-alarms alarms)
+  (let ((active-alarms '()))
+    (do ((i 0 (+ i 1)))
+        ((= i (u8vector-length alarms)) active-alarms)
+      (if (not (zero? (u8vector-ref alarms i)))
+          (do ((j 0 (+ j 1)))
+              ((= i 8) ,done)
+            (if (bit-set? j (u8vector-ref alarms i))
+                (push! (vector-ref (vector-ref alarmlist 1) j)
+                  active-alarms)))))))
+
+
+(define (update-alarms)
+  (let* ((current-alarms (check-alarms alarms))
+         (turned-on (lset-difference eq? current-alarms active-alarms))
+         (turned-off (lset-difference eq? active-alarms current-alarms)))
+    (save-alarms turned-on turned-off)))
+
+(define (save-alarms on off)
+  (unless (null? off)
+    (fold/query
+      (lambda (seed . cols) (values #t seed))
+      '()
+      (with-output-to-string
+        "UPDATE alarms SET end=datetime('now') WHERE end=NULL AND ( "
+        (lambda ()
+          (print
+            (intersperse
+              (map
+                (lambda (x)
+                  (with-output-to-string
+                    "id="
+                    (lambda (y) (display y))))
+                off)
+              " OR "))
+          (print ")")))))
+  (unless (null? on)
+    (for-each
+      (lambda (x)
+        (fold/query
+          (lambda (seed . cols) (values #t seed))
+          '()
+          (with-output-to-string
+            "INSERT INTO alarms (id, start, end) VALUES ("
+            (lambda ()
+              (print x ", datetime('now'), NULL)")))))
+      on)))
+
+
+
+                                        ; == FetchWrite communications ==
+
 (define fw-mutex (make-mutex))
 (define db-mutex (make-mutex))
 
@@ -158,6 +223,8 @@
     (lambda ()
       (with-mutex fw-mutex
         (fetch/apply 62 0 125 read-db fetch-port))
+      (with-mutex alarm-mutex
+        (set! current-alarms (check-alarms alarms)))
       (set! counter (+ 1 counter))
       (when (= counter (save-period))
 	(with-mutex db-mutex
@@ -194,6 +261,7 @@
 ;;; Database handling
 
 (define dbname (make-parameter "demo01.sqlite"))
+(define dbfilename (string-append (*server-root*) "/" (dbname)))
 
 (define-type dbhandler
   constructor: %make-dbhandler
@@ -205,6 +273,12 @@
     (lambda () (sqlite3 dbpath))
     (lambda (hdl close)
       (%make-dbhandler hdl close))))
+
+(define (fold/query fn seed query)
+  (let* ((db (make-dbhandler dbfilename))
+         (res ((dbhandler-run fn seed query))))
+    ((dbhandler-close db))
+    res))
 
 (define (display-row seed . cols)
   (println (map (lambda (x) (cons x #\space)) cols))
@@ -258,15 +332,12 @@
                                    `(("dedicated" . ,(get-dedicated-contacts))
                                      ("auxiliaries"
 				      . ,(get-auxiliary-contacts)))))
-                    (notifies . (,(list->table
-                                    '((msg . "Notify 1")
-                                      (severity . 1)))
-                                 ,(list->table
-                                    '((msg . "Notify 2")
-                                      (severity . 3)))
-                                 ,(list->table
-                                    '((msg . "Notify 3")
-                                      (severity . 2))))))))))
+                    (notifies . ,(with-mutex alarm-mutex
+                                   (map (lambda (x)
+                                          (list->table
+                                            `((msg . ,x)
+                                              (severity . 1))))
+                                    (active-alarms)))))))))
 
 
 ;;; Monitor
