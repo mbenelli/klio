@@ -28,6 +28,14 @@
 	(lambda (x)
 	  (f (g x))))))
 
+;; Lists
+
+(define (intersperse xs sep)
+  (cond
+    ((null? xs) '())
+    ((null? (cdr xs)) xs)
+    (else (cons (car xs) (cons sep (intersperse (cdr xs)))))))
+
 ;;; String
 
 (define (str x)

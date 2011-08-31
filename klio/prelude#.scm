@@ -9,6 +9,7 @@
   identity
   const
   compose
+  intersperse
   str
   cout
   cerr
