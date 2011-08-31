@@ -73,34 +73,34 @@
        0 0    ; aux contacts enabling      [150, 151]
        0 0    ; vacuum contacts enablings  [152, 153]
 
-       67 22 0 0 
-       0 0 0 0 
+       67 22 0 0
+       0 0 0 0
        64 64 0 0
 
-       66 72 0 0 
+       66 72 0 0
        0 0 0 0
        0 0 0 0
-       
-       0 0 0 0
-       0 0 0 0
-       0 0 0 0
-       
+
        0 0 0 0
        0 0 0 0
        0 0 0 0
-       
+
        0 0 0 0
        0 0 0 0
        0 0 0 0
-       
+
        0 0 0 0
        0 0 0 0
        0 0 0 0
-       
+
        0 0 0 0
        0 0 0 0
        0 0 0 0
-       
+
+       0 0 0 0
+       0 0 0 0
+       0 0 0 0
+
        0 0 0 0
        0 0 0 0
        0 0 0 0))
@@ -154,10 +154,10 @@
 
 (define (serve-connection p)
   (let ((request (make-u8vector 16)))
-;    (print (time->seconds (current-time)) " - Serving request ...")
+    (print (time->seconds (current-time)) " - Serving request ...")
     (read-subu8vector request 0 16 p)
     (serve-request request p)
-;    (println "done.")
+    (println "done.")
     (serve-connection p)))
 
 (define (srv s)
