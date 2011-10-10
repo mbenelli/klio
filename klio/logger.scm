@@ -6,6 +6,7 @@
 
 (##namespace ("logger#"))
 (##include "~~lib/gambit#.scm")
+(##include "prelude#.scm")
 (##namespace ("datetime#" date->string current-date))
 (##namespace ("strings#" string-pad string-upcase))
 
@@ -21,15 +22,19 @@
   (<= (cdr (assq level levels)) (current-logger-level)))
 
 
+(define logger-mutex (make-mutex))
+
 (define (make-logger filename)
   (lambda (level msg)
     (if (level-enabled? level)
-      (with-output-to-file `(path: ,filename append: #t)
-	(lambda ()
-	  (println 
+      (with-mutex
+       logger-mutex
+       (with-output-to-file `(path: ,filename append: #t)
+         (lambda ()
+           (println
             (date->string (current-date 0) "~a, ~d ~b ~Y ~T GMT")
 	    #\space #\space
 	    (string-pad (string-upcase (symbol->string level)) 7)
 	    #\space #\space
-	    msg))))))
+	    msg)))))))
 
