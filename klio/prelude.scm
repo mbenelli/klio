@@ -34,7 +34,7 @@
   (cond
     ((null? xs) '())
     ((null? (cdr xs)) xs)
-    (else (cons (car xs) (cons sep (intersperse (cdr xs)))))))
+    (else (cons (car xs) (cons sep (intersperse (cdr xs) sep))))))
 
 ;;; String
 
