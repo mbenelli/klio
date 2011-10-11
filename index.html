@@ -11,39 +11,16 @@
       margin-left: auto;
       margin-right: auto;
       }
-      /*
-      #frame > * {
-      width: 700px;
-      margin-left: auto;
-      margin-right: auto;
-      }
-      */
       #left {
       left: 0;
-      width: 128px;
-      }
-      #header {
-      position: absolute;
-      top: 2px;
-      height: 128px;
-      }
-      #header h1 {
-      font-size: 48px;
-      }
-      #logo {
-      }
-      #title {
+      float: left;
+      width: 200px;
       }
       #contents {
-      position: absolute;
-      width: 500px;
+      float: left;
+      width: 400px;
       top: 0px;
-      left: 200px;
       bottom: 32px;
-      }
-
-      dt {
-      font-weight: bold;
       }
 
       #footer {
@@ -64,6 +41,7 @@
 	position: absolute;
 	visibility: hidden;
 	top: 0px;
+	width: 400px;
 	padding: 30px;
       }
 
@@ -116,9 +94,10 @@
 
 	<div id="intro" class="description">
 	  <h1>Klio</h1>
-	  <p>Klio is a collection of open-source, production-quality tools for the Gambit-C Scheme
-	  system.  Its development is driven from real-world request in the field of industrial
-	  automation, and powered by state of the art researchs in information technology.</p>
+	  <p>Klio is a collection of open-source, production-quality tools for
+	  the Gambit-C Scheme system.</p><p>Its development is driven from
+	  real-world requests in the field of industrial automation, and it's
+	  powered by state of the art researches in information technology.</p>
 	
 	  <p>Klio is released under LGPL license.  The code can be found at:
 	  <a href="https://github.com/mbenelli/klio">
@@ -128,34 +107,39 @@
 
 	<div id="libraries" class="description">
 	  <h1>Klio Libraries </h1>
-	  <p>Utilities for day by day development: data structures, regular expressions,
-	  date and time processing, xml parsing and authoring, json conversion, database access
-	  and so on.  Most of these libraries come from careful design and extensive real-world
-          testing.  A continuous effort is spent in tuning their performance and usability.</p>
+	  <p>Utilities for day by day development: data structures, regular
+	  expressions, date and time processing, xml parsing and authoring,
+	  json conversion, database access and so on.</p>
+	  <p>Most of these libraries come from careful design and extensive
+	  real-world testing.  A continuous effort is spent in tuning their
+	  performance and usability.</p>
 	  <a class="back lnk">Back</a>
         </div>
 
 	<div id="webserver" class="description">
 	  <h1>Klio Web Server</h1>
-	  <p>A powerful and fast web server, it offers the flexibily of dynamical languages
-	  and the performance of compiled ones.  It is used in several production
-	  environments on a variety of architectures, as a key element in critical application
-	  on systems with constrainted resources.</p>
+	  <p>A powerful and fast web server, it offers the flexibily of
+	  dynamical languages and the performance of compiled ones, in
+	  serving static and dynamic contents.</p>
+	  <p>It is used in several production environments on a variety of
+	  architectures, as a key element in critical applications
+	  on systems with constrained resources.</p>
 	  <a class="back lnk">Back</a>
         </div>
 
 	<div id="scada" class="description">
 	  <h1>Klio SCADA</h1>
-	  <p>Interfaces with PLCs using standards protocols like modbus or fetchwrite,
-	  takig advantage of meta-programming facilities for generate configurations and
-	  addresses mapping from a variety of specification sources.</p>
+	  <p>Interfaces with PLCs using standards protocols like modbus or
+	  fetchwrite, takig advantage of meta-programming facilities for
+	  generate configurations and addresses mapping from a variety of
+	  specification sources.</p>
 	  <a class="back lnk">Back</a>
         </div>
 
 	<div id="ai" class="description">
 	  <h1>Klio AI</h1>
-	  <p>Work in progress on simple and powerful synergy between classical AI tools 
-	  (searching, plannig) and statistical and signal processing algorithim</p>
+	  <p>Work in progress on simple and powerful sinergy between classical
+	  AI tools (searching, plannig) and signal processing algorithms.</p>
 	  <a class="back lnk">Back</a>
         </div>
 
