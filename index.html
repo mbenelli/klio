@@ -1,57 +1,63 @@
 <html>
-
-  <!-- Index page -->
-
   <head>
     <title>Klio</title>
     <style>
       #frame {
-      width: 700px;
-      height: 100%;
-      margin-left: auto;
-      margin-right: auto;
+      	width: 700px;
+      	height: 100%;
+        margin-left: auto;
+      	margin-right: auto;
       }
       #left {
-      left: 0;
-      float: left;
-      width: 200px;
+      	left: 0;
+      	width: 128px;
+      }
+      #header {
+      	position: absolute;
+      	top: 2px;
+      	height: 128px;
+      }
+      #header h1 {
+      	font-size: 48px;
       }
       #contents {
-      float: left;
-      width: 400px;
-      top: 0px;
-      bottom: 32px;
+      	position: absolute;
+      	width: 500px;
+      	top: 0px;
+      	left: 200px;
+      	bottom: 32px;
+      }
+
+      dt {
+      	font-weight: bold;
       }
 
       #footer {
-      position: absolute;
-      bottom: 2px;
-      font-size: 0.7em;
+      	position: absolute;
+      	bottom: 2px;
+      	font-size: 0.7em;
       }
 
       #license-img {
-      float: left;
+      	float: left;
       }
       #license-text {
-      float: left;
-      margin-left: 1em;
+      	float: left;
+      	margin-left: 1em;
       }
-
       .description {
 	position: absolute;
 	visibility: hidden;
 	top: 0px;
-	width: 400px;
 	padding: 30px;
       }
-
       .back {
-      text-decoration: underline;
+      	text-decoration: underline;
       }
 
     </style>
 
-    <script src="jquery-1.6.4.min.js"></script>
+    <script src="index_files/jquery-1.js"></script>
     <script>
     function show_section(section) {
       $('.description').css('visibility', 'hidden');
@@ -64,102 +70,123 @@
 	document.body.style.cursor='default';
       });
 
+      $('#home_lnk').click(function () { show_section('#intro'); });
+      $('#ports_lnk').click(function () { show_section('#ports'); });
       $('#libraries_lnk').click(function () { show_section('#libraries'); });
       $('#webserver_lnk').click(function () { show_section('#webserver'); });
       $('#scada_lnk').click(function () { show_section('#scada'); });
       $('#ai_lnk').click(function () { show_section('#ai'); });
+      $('#acknowledgments_lnk').click(function () {
+	  show_section('#acknowledgents');
+      });
       $('.back').click(function () { show_section('#intro'); });
  
       $('#intro').css('visibility', 'visible');
     });
-    </script>
-  </head>
-
-  <body>
+    </script></head><body style="cursor: default;">
     <div id="frame">
 
       <div id="left">
 	<div id="logo">
-	  <img src="klio-logo.png">
+	  <img src="index_files/klio-logo.png">
 	</div>
 	<ul>
-	  <li id='libraries_lnk' class='lnk'>Libraries</li>
-	  <li id='webserver_lnk' class='lnk'>Web Server</li>
-	  <li id='scada_lnk' class='lnk'>Scada</li>
-	  <li id='ai_lnk' class='lnk'>Ai</li>
+	  <li id="home_lnk" class="lnk">Home</li>
+	  <li id="ports_lnk" class="lnk">Platforms</li>
+	  <br>
+	  <li id="libraries_lnk" class="lnk">Libraries</li>
+	  <li id="webserver_lnk" class="lnk">Web Server</li>
+	  <li id="scada_lnk" class="lnk">Scada</li>
+	  <li id="ai_lnk" class="lnk">Ai</li>
 	</ul>
       </div>
 
       <div id="contents">
 
-	<div id="intro" class="description">
+	<div style="visibility: visible;" id="intro" class="description">
 	  <h1>Klio</h1>
 	  <p>Klio is a collection of open-source, production-quality tools for
-	  the Gambit-C Scheme system.</p><p>Its development is driven from
-	  real-world requests in the field of industrial automation, and it's
-	  powered by state of the art researches in information technology.</p>
+	  the Gambit-C Scheme system.  Its development is driven from
+	  real-world request in the field of industrial automation, and
+	  powered by state of the art researchs in information technology.</p>
 	
 	  <p>Klio is released under LGPL license.  The code can be found at:
 	  <a href="https://github.com/mbenelli/klio">
 	    https://github.com/mbenelli/klio
 	  </a></p>
+
 	</div>
 
-	<div id="libraries" class="description">
+	<div style="visibility: hidden;" id="ports" class="description">
+	  <h1>Platforms</h1>
+	  <p>Klio has been used and tested on following platforms:</p>
+	  <ul>
+	    <li>x86 - GNU/Linux</li>
+	    <li>x86 - FreeBSD</li>
+	    <li>ARM - GNU/Linux</li>
+	    <li>SH-2 - ucLinux</li>
+	    <li>x86 - MS Windows</li>
+	    <li>x86 - Mac OS X</li>
+	  </ul>
+	  <p>Many thanks to Marina Pettinari and Andrea Baldini for their
+	  help in porting on SH-2/ucLinux.</p>
+	</div>
+
+	<div style="visibility: hidden;" id="libraries" class="description">
 	  <h1>Klio Libraries </h1>
 	  <p>Utilities for day by day development: data structures, regular
 	  expressions, date and time processing, xml parsing and authoring,
-	  json conversion, database access and so on.</p>
-	  <p>Most of these libraries come from careful design and extensive
-	  real-world testing.  A continuous effort is spent in tuning their
-	  performance and usability.</p>
-	  <a class="back lnk">Back</a>
+	  json conversion, database access and so on.  Most of these libraries
+	  come from careful design and extensive real-world testing.
+	  A continuous effort is spent in tuning their performance and
+	  usability.</p>
+	  <a class="back lnk">Home</a>
         </div>
 
-	<div id="webserver" class="description">
+	<div style="visibility: hidden;" id="webserver" class="description">
 	  <h1>Klio Web Server</h1>
 	  <p>A powerful and fast web server, it offers the flexibily of
-	  dynamical languages and the performance of compiled ones, in
-	  serving static and dynamic contents.</p>
-	  <p>It is used in several production environments on a variety of
-	  architectures, as a key element in critical applications
-	  on systems with constrained resources.</p>
-	  <a class="back lnk">Back</a>
+	  dynamical languages and the performance of compiled ones.  It is
+	  used in several production environments on a variety of
+	  architectures, as a key element in critical application on systems
+	  with constrainted resources.</p>
+	  <a class="back lnk">Home</a>
         </div>
 
-	<div id="scada" class="description">
+	<div style="visibility: hidden;" id="scada" class="description">
 	  <h1>Klio SCADA</h1>
 	  <p>Interfaces with PLCs using standards protocols like modbus or
-	  fetchwrite, takig advantage of meta-programming facilities for
+	  fetchwrite, takin advantage of meta-programming facilities for
 	  generate configurations and addresses mapping from a variety of
 	  specification sources.</p>
-	  <a class="back lnk">Back</a>
+	  <a class="back lnk">Home</a>
         </div>
 
-	<div id="ai" class="description">
+	<div style="visibility: hidden;" id="ai" class="description">
 	  <h1>Klio AI</h1>
-	  <p>Work in progress on simple and powerful sinergy between classical
-	  AI tools (searching, plannig) and signal processing algorithms.</p>
-	  <a class="back lnk">Back</a>
+	  <p>Work in progress on simple and powerful synergy between classical
+	  AI tools (searching, plannig) and statistical and signal processing
+	  algorithim</p>
+	  <a class="back lnk">Home</a>
         </div>
 
+	<div style="visibility: hidden;" id="acknowledgements" class="description">
+	  <h1>Acknowledgements</h1>
+	  <a class="back lnk">Home</a>
+	</div>
 
       </div>
 
 
       <div id="footer">
 	<div id="license-img">
-	  <img alt="Creative Commons License" style="border-width:0"
-	  src="http://i.creativecommons.org/l/by-nc-nd/3.0/80x15.png" />
+	  <img alt="Creative Commons License" style="border-width: 0pt;" src="index_files/80x15.png">
 	</div>
 	<div id="license-text">
 	  Klio logo by
-	  <a xmlns:cc="http://creativecommons.org/ns#"
-	    href="http://mbenelli.github.com/klio" property="cc:attributionName"
-	    rel="cc:attributionURL">Marco Benelli</a>
+	  <a xmlns:cc="http://creativecommons.org/ns#" href="http://mbenelli.github.com/klio" property="cc:attributionName" rel="cc:attributionURL">Marco Benelli</a>
 	  is licensed under a
-	  <a rel="license"
-	    href="http://creativecommons.org/licenses/by-nc-nd/3.0/">
+	  <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/">
 	    Creative Commons Attribution-NonCommercial-NoDerivs 3.0 Unported
 	    License</a>.
 	</div>
@@ -168,3 +195,4 @@
     </div>
   </body>
 </html>
+
