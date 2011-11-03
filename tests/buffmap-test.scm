@@ -2,19 +2,25 @@
 
 (##namespace ("buffmap-test#"))
 (##include "~~lib/gambit#.scm")
+(##include "../klio/test.scm")
+
+(load "../klio/ctypes")
+(load "../klio/buffmap")
+
 (##namespace
  ("buffmap#" make-var build-accessors))
 
+
 (define buffer
-  (u8vector
-    #x00
-    #xff
-    #xff
-    #x01
-    0 0 128 63   ; f32 1.0
-    #x02
-    #x03
-    0 0 0 0 0 0 240 63)) ; f64 1.0  
+  (u8vector              ; type    little-endian    big-endian
+    #x00                 ; u8            0             0
+    #xff                 ; u8          255           255
+    #xfe                 ; bits              01111111
+    #x01                 ; u8            1             1
+    0 0 128 63           ; f32           1.0           4.600602988224807e-41
+    #x02                 ; u8            2             2
+    #x03                 ; u8            3             3
+    0 0 0 0 0 0 240 63)) ; f64           1.0           3.03865e-319
   
 (define datamap
   (map
@@ -37,4 +43,27 @@
       (v14 f64 10))))
 
 (define get (build-accessors buffer datamap))
+(define get-be (build-accessors buffer datamap 'big))
+
+(define (run)
+  (test (get 'v0) 0)
+  (test (get 'v1) 255)
+  (test (get 'v2) 0)
+  (test (get 'v3) 1)
+  (test (get 'v4) 1)
+  (test (get 'v5) 1)
+  (test (get 'v6) 1)
+  (test (get 'v7) 1)
+  (test (get 'v8) 1)
+  (test (get 'v9) 1)
+  (test (get 'v10) 1)
+  (test (get 'v11) 1.0)
+  (test (get 'v12) 2)
+  (test (get 'v13) 3)
+  (test (get 'v14) 1.0)
+
+  (test (get-be 'v11) 4.600602988224807e-41)
+  (test (get-be 'v14) 3.03865e-319))
+
+(run)
 

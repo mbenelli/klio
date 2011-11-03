@@ -12,8 +12,10 @@
 
 (##include "~~lib/gambit#.scm")
 (##include "../klio/prelude#.scm")
-(##namespace ("fetchwrite#" OK OPCODE-WRITE OPCODE-FETCH make-response-header))
+(##namespace
+ ("fetchwrite#" OK OPCODE-WRITE OPCODE-FETCH make-response-header))
 
+(load "../klio/fetchwrite")
 
 (define buffer (make-u8vector 1024))
 
@@ -177,4 +179,6 @@
     (thread-start! wt)
     (if (char=? (read-char) #\q)
 	(exit))))
+
+(simulator-start 2000 2001)
 
