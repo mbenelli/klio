@@ -33,7 +33,7 @@
 ; TODO: maybe these utilities should stay in another place.
 
 
-(define native-endianess 'little)  ; little or big
+(define native-endianess (make-parameter 'little))  ; little or big
 
 (define (u8vector-reverse v)
   (let* ((len (u8vector-length v))

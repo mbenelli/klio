@@ -3,7 +3,7 @@
 ; Copyright (c) 2011 by Benelli Marco <mbenelli@yahoo.com>.
 ; All Right Reserved.
 ;
-; These utilities builds functionis to read and write variables.
+; These utilities builds functions to read and write variables.
 ; A typical use is in conjunction with a binary communication protocol (ie:
 ; modbus), the variables are read from a buffer and written using a function
 ; provided by client.
@@ -13,10 +13,14 @@
 
 (##namespace ("buffmap#"))
 (##include "~~lib/gambit#.scm")
-(##namespace ("ctypes#" read-u16 write-u16 read-u32 write-u32 read-f32 read-f64))
+(##namespace
+ ("ctypes#" read-s8 write-s8 read-u16 write-u16 read-s16 write-s16
+  read-u32 write-u32 read-s32 write-s32 read-u64 write-u64
+  read-s64 write-s64 read-f32 read-f64
+  native-endianess u8vector-reverse))
 
 
-(define types '(bit byte f32 f64))
+(define types '(bit byte u16 u32 f32 f64))
 
 (define-type
   var
@@ -41,13 +45,17 @@
 ;
 ; Usage: ((table-ref accessors 'v0))
 
-(define (build-accessors buffer datamap)
+(define (build-accessors buffer datamap
+                         #!optional (endianess (native-endianess)))
   (let ((accessors (make-table)))
     (for-each
      (lambda (x)
        (let ((name (var-name x))
              (type (var-type x))
-             (offset (var-offset x)))
+             (offset (var-offset x))
+             (convert (if (eq? endianess (native-endianess))
+                          values
+                          u8vector-reverse)))
 	 (cond
 	   ((eq? type 'byte) (table-set! accessors name
                                (lambda ()
@@ -61,22 +69,26 @@
            ((eq? type 'u16) (table-set! accessor name
                               (lambda ()
                                 (with-input-from-u8vector
-                                  (subu8vector buffer offset (+ offset 2))
+                                  (convert
+                                    (subu8vector buffer offset (+ offset 2)))
                                   (lambda () (read-u16))))))
            ((eq? type 'u32) (table-set! accessor name
                               (lambda ()
                                 (with-input-from-u8vector
-                                  (subu8vector buffer offset (+ offset 4))
+                                  (convert
+                                    (subu8vector buffer offset (+ offset 4)))
                                   (lambda () (read-u32))))))
 	   ((eq? type 'f32) (table-set! accessors name
                               (lambda ()
                                 (with-input-from-u8vector
-                                  (subu8vector buffer offset (+ offset 4))
+                                  (convert
+                                    (subu8vector buffer offset (+ offset 4)))
                                   (lambda () (read-f32))))))
 	   ((eq? type 'f64) (table-set! accessors name
                               (lambda ()
                                 (with-input-from-u8vector
-                                  (subu8vector buffer offset (+ offset 8))
+                                  (convert
+                                    (subu8vector buffer offset (+ offset 8)))
                                   (lambda () (read-f64))))))
 	   (else (raise "Unknown type")))))
      datamap)
