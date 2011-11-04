@@ -47,7 +47,8 @@
                              (".jpg"  . "image/jpg")
                              (".jpeg" . "image/jpeg")
                              (".png"  . "image/png")
-                             (".svg"  . "image/svg+xml")))))
+                             (".svg"  . "image/svg+xml")
+                             (".svgz" . "image/svg+xml")))))
       (cdr mimetype))
     "text/plain"))
 
