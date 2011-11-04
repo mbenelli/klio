@@ -4,11 +4,12 @@
     <style>
       #frame {
       	width: 700px;
-      	height: 100%;
+      	height: 99%;
         margin-left: auto;
       	margin-right: auto;
       }
       #left {
+	float: left;
       	left: 0;
       	width: 128px;
       }
@@ -21,11 +22,14 @@
       	font-size: 48px;
       }
       #contents {
-      	position: absolute;
+	float: left;
       	width: 500px;
       	top: 0px;
       	left: 200px;
       	bottom: 32px;
+      }
+      #contents > * {
+	width: 500px;
       }
 
       dt {
