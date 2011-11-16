@@ -249,13 +249,18 @@
 
   (define (write-number num)
     (let ((str (number->string (exact->inexact num))))
-      (if (char=? (string-ref str 0) #\.)
-          (begin
-            (display "0" port)
-            (display str port))
-          (if (char=? (string-ref str (- (string-length str) 1)) #\.)
-              (display (substring str 0 (- (string-length str) 1)) port)
-              (display str port)))))
+      (cond
+	((char=? (string-ref str 0) #\.)
+	 (display "0" port)
+	 (display str port))
+	((and (char=? (string-ref str 0) #\-)
+	      (char=? (string-ref str 1) #\.))
+	 (display "-0" port)
+	 (display (substring str 1 (string-length str)) port))
+	((char=? (string-ref str (- (string-length str) 1)) #\.)
+	 (display (substring str 0 (- (string-length str) 1)) port))
+	(else
+	 (display str port)))))
 
   (define (write-constant value)
     (cond ((eq? value #f)
