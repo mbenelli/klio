@@ -7,8 +7,9 @@
 (##namespace ("logger#"))
 (##include "~~lib/gambit#.scm")
 (##include "prelude#.scm")
-(##namespace ("datetime#" date->string current-date))
-(##namespace ("strings#" string-pad string-upcase))
+(##namespace
+  ("rfc1123#" time->string)
+  ("strings#" string-pad string-upcase))
 
 
 (define levels '((error . 0) (warning . 1) (info . 2) (debug . 3)))
@@ -32,7 +33,7 @@
        (with-output-to-file `(path: ,filename append: #t)
          (lambda ()
            (println
-            (date->string (current-date 0) "~a, ~d ~b ~Y ~T GMT")
+	    (time->string (current-time))
 	    #\space #\space
 	    (string-pad (string-upcase (symbol->string level)) 7)
 	    #\space #\space

@@ -13,7 +13,7 @@
 (##include "prelude#.scm")
 (##namespace
   ("strings#" string-contains-ci)
-  ("datetime#" current-date date->string))
+  ("rfc1123#" time->string))
 
 (declare
   (standard-bindings)
@@ -873,7 +873,7 @@
   (lambda () (reply-with-status-code "503 Service Unavaible")))
 
 (define (response-date)
-  (date->string (current-date 0) "~a, ~d ~b ~Y ~T GMT"))
+  (time->string (current-time)))
 
 (define (reply-unbuffered thunk #!optional (attributes '()))
   (let* ((request (current-request))

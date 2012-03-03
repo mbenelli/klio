@@ -8,7 +8,8 @@
 (##include "base64#.scm")
 (##include "http#.scm")
 (##include "prelude#.scm")
-(##namespace ("datetime#" date->string make-time time-utc->date))
+(##namespace
+  ("rfc1123#" time->string))
 
 (declare
   (standard-bindings)
@@ -54,12 +55,8 @@
 
 
 (define (last-modified path)
-  (let ((utc (file-info-last-modification-time (file-info path))))
-    (date->string
-      (time-utc->date
-        (make-time 'time-utc 0
-          (inexact->exact (truncate (time->seconds utc)))))
-      "~a, ~d ~b ~Y ~T GMT")))
+  (time->string
+    (file-info-last-modification-time (file-info path))))
 
 
 (define get-static
