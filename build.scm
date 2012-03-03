@@ -12,6 +12,7 @@
     strings
     irregex
     datetime
+    rfc1123
     format
     vectors
     simple-sort
