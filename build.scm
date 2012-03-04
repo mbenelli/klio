@@ -23,7 +23,8 @@
     logger
 
     base64
-    http
+    uri
+    http-srv
     json
 
     input-parse
