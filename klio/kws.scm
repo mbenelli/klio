@@ -6,7 +6,7 @@
 (##namespace ("kws#"))
 (##include "~~lib/gambit#.scm")
 (##include "base64#.scm")
-(##include "http#.scm")
+(##include "http-srv#.scm")
 (##include "prelude#.scm")
 (##namespace
   ("rfc1123#" time->string))

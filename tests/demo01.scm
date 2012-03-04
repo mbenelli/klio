@@ -16,9 +16,9 @@
 
 (##namespace
   ("lists#" lset-difference)
-  ("http#" reply current-request request-connection request-query
-   request-attributes request-uri uri-path uri-query see-other
-   response-date)
+  ("uri#" uri-path uri-query)
+  ("http-srv#" reply current-request request-connection request-query
+   request-attributes request-uri see-other response-date)
   ("json#" json-write json-read)
   ("sqlite3#" sqlite3)
   ("binary-io#" read-ieee-float32)

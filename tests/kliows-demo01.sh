@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/sh
 
 export KLIO_PATH=../klio
 
@@ -9,7 +9,8 @@ $KLIO_PATH/charsets \
 $KLIO_PATH/strings \
 $KLIO_PATH/base64 \
 $KLIO_PATH/rfc1123 \
-$KLIO_PATH/http \
+$KLIO_PATH/uri \
+$KLIO_PATH/http-srv \
 $KLIO_PATH/binary-io \
 $KLIO_PATH/sqlite3 \
 $KLIO_PATH/fetchwrite \

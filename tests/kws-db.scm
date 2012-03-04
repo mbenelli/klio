@@ -7,8 +7,8 @@
 (##include "~~lib/gambit#.scm")
 (##include "../klio/prelude#.scm")
 (##namespace
-  ("http#" reply current-request request-uri uri-query uri-path
-   reply-chunked)
+  ("uri#" uri-query uri-path)
+  ("http-srv#" reply current-request request-uri reply-chunked)
   ("sqlite3#" sqlite3)
   ("kws#" get-static *server-root*))
 
