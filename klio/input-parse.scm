@@ -2,8 +2,9 @@
 ;; All Rights Reserved.
 ;;
 ;; Original taken from: http://okmij.org/ftp/Scheme/xml.html
-
-
+;;
+;; Notes in original code:
+;;
 ;****************************************************************************
 ;			Simple Parsing of input
 ;
@@ -38,7 +39,6 @@
 ; If a particular implementation lacks SRFI-13 support, please
 ; include the file srfi-13-local.scm
 ;
-; $Id: input-parse.scm,v 1.1.2.1 2010/06/30 16:04:51 mbenelli-cvs Exp $
 
 (##namespace ("input-parse#"))
 (##include "~~lib/gambit#.scm")
