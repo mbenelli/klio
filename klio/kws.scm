@@ -6,6 +6,7 @@
 (##namespace ("kws#"))
 (##include "~~lib/gambit#.scm")
 (##include "base64#.scm")
+(##include "uri#.scm")
 (##include "http-srv#.scm")
 (##include "prelude#.scm")
 (##namespace
