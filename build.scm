@@ -40,6 +40,25 @@
     fetchwrite
     ))
 
+(define (compile-sqlite)
+  (with-exception-catcher
+    (lambda ()
+      (println "WARNING: sqlite3 not compiled."))
+    (lambda ()
+      (let ((sqlite-flags (with-input-from-process
+                           '(path: "pkg-config" arguments: ("--cflags" "sqlite3"))
+                           read-line))
+           (sqlite-libs (with-input-from-process
+                          '(path: "pkg-config" arguments: ("--libs" "sqlite3"))
+                          read-line)))
+       (if (file-exists? "sqlite3.o1")
+           (delete-file "sqlite3.o1"))
+       (print "Compiling sqlite3 (warnings disabled)... ")
+       (compile-file "sqlite3.scm"
+         cc-options: (string-append "-w " sqlite-flags)
+         ld-options: sqlite-libs)
+       (println "done.")))))
+
 (parameterize ((current-directory dir))
   (for-each
     (lambda (x)
@@ -51,5 +70,7 @@
         (print "Compiling " x " ... ")
         (compile-file src)
         (println "done.")))
-    srcs))
+    srcs)
+  (compile-sqlite)
+  )
 
