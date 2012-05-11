@@ -1,6 +1,6 @@
-;; demo01.scm - An example of a scada system
+;; scada.scm - An example of a scada system
 ;;
-;; Copyright (c) 2008-2010 by Marco Benelli <mbenelli@yahoo.com>
+;; Copyright (c) 2011-2012 by Marco Benelli <mbenelli@yahoo.com>
 ;; All Rights Reserved.
 
 ;; Warning: this example isn't working yet.
@@ -9,7 +9,7 @@
 ;;
 ;; - complete responses
 
-(##namespace ("demo01#"))
+(##namespace ("scada#"))
 (##include "~~lib/gambit#.scm")
 (##include "~/.klio/prelude#.scm")
 
@@ -281,7 +281,7 @@
 
                                         ; == Database handling ==
 
-(define dbname (make-parameter "demo01.sqlite"))
+(define dbname (make-parameter "data.sqlite"))
 (define dbfilename (string-append (*server-root*) "/" (dbname)))
 
 (define-type dbhandler

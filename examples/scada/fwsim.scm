@@ -11,11 +11,11 @@
 ;; TODO: check mutex
 
 (##include "~~lib/gambit#.scm")
-(##include "../klio/prelude#.scm")
+(##include "~/.klio/prelude#.scm")
 (##namespace
  ("fetchwrite#" OK OPCODE-WRITE OPCODE-FETCH make-response-header))
 
-(load "../klio/fetchwrite")
+(load "~/.klio/fetchwrite")
 
 (define buffer (make-u8vector 1024))
 
