@@ -97,6 +97,13 @@
                                         ; == Data map ==
 
 (define measures (make-f32vector 32))
+(define measures-lbl
+  (do ((i 0 (+ i 1))
+       (res (make-vector 32)))
+    ((= i 32) res)
+    (vector-set! res i (with-output-to-string "v" (lambda () (write i))))))
+
+
 (define alarms (make-u8vector 10))
 (define enablings (make-u8vector 16))   ; channels, commands, ded, ded,
                                         ; aux, aux, vacuum, vacuum
@@ -109,6 +116,9 @@
 
 (define (get-measure i)
   (f32vector-ref measures i))
+
+(define (get-measure-lbl i)
+  (vector-ref measures-lbl i))
 
 (define (get-active-channels)
   (let ((channels-mask (u8vector-ref enablings 8)))
@@ -310,6 +320,28 @@
                                         ; == Pages ==
 
 (define pages (make-table test: string=?))
+
+(table-set! pages "/status"
+  (lambda ()
+    (json-write
+      (list->table
+	`((user . "user00")
+	  (time . ,(response-date))
+	  (status . "running")
+	  (channels . ,(list->table
+			 (let loop ((i 0) (res '()))
+			   (if (= i (vector-length measures-lbl))
+			     res
+			     (loop (+ i 1)
+			       (cons
+				 (cons (get-measure-lbl i)
+				       (get-measure i))
+				 res))))))
+	  (contacts . ,(list->table
+			 `(("dedicated" . ,(get-dedicated-contacts))
+			   ("auxiliaries"
+			    . ,(get-auxiliary-contacts)))))
+	  (notifies . ,active-alarms))))))
 
                                         ; == Dispatcher ==
 

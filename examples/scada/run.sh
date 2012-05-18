@@ -17,5 +17,5 @@ $KLIO_PATH/fetchwrite \
 $KLIO_PATH/json \
 $KLIO_PATH/kws \
 scada \
--e '(begin (scada#init-active-alarms-from-db) (pp scada#active-alarms) (thread-start! scada#update-thread) (kws#kws port-number: 8000 server-root: "." dispatcher: scada#dispatch multithread: #t))'
+-e '(begin (scada#init-active-alarms-from-db) (pp scada#active-alarms) (thread-start! scada#update-thread) (kws#kws port-number: 5000 server-root: "./srvroot" dispatcher: scada#dispatch multithread: #t))'
 
