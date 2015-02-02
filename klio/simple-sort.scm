@@ -25,7 +25,7 @@
 
 
 (##namespace ("simple-sort#"))
-(##include "~~/lib/gambit#.scm")
+(##include "~~lib/gambit#.scm")
 
 
 (define (sort sequence less?)
