@@ -4,7 +4,7 @@
 ;; All Rights Reserved.
 
 (##namespace ("simple#"))
-(##include "~~/lib/gambit#.scm")
+(##include "~~lib/gambit#.scm")
 (##include "../../klio/prelude#.scm")
 
 (##namespace
