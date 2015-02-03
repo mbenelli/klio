@@ -24,9 +24,9 @@
   (if (null? fs)
       identity
       (let ((f (car fs))
-	    (g (apply compose (cdr fs))))
-	(lambda (x)
-	  (f (g x))))))
+            (g (apply compose (cdr fs))))
+        (lambda (x)
+          (f (g x))))))
 
 ;; Lists
 
@@ -50,8 +50,8 @@
 (define (cerr . args)
   (for-each (lambda (x)
               (if (procedure? x)
-		  (x (current-error-port))
-		  (display x (current-error-port))))
+                  (x (current-error-port))
+                  (display x (current-error-port))))
             args))
 
 (define nl (string #\newline))
@@ -104,13 +104,13 @@
 
 (define (memoize f)
   (let ((cache (make-table))
-	(not-found (gensym)))
+        (not-found (gensym)))
     (lambda k
       (let ((v (table-ref cache k not-found)))
-	(if (eq? v not-found)
-	    (let ((res (apply f k)))
-	      (table-set! cache k res)
-	      res)
-	    v)))))
+        (if (eq? v not-found)
+            (let ((res (apply f k)))
+              (table-set! cache k res)
+              res)
+            v)))))
 
 
