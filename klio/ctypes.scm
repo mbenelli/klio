@@ -29,7 +29,7 @@
 (define f64vector-subtype (##subtype (f64vector)))
 
 
-; Utilites for endianes handlings.
+; Utilites for endianess handling.
 ; TODO: maybe these utilities should stay in another place.
 
 
