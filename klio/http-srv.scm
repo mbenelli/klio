@@ -145,7 +145,7 @@
       ((not (server-threaded? (request-server request))) #f)
       ((assoc "Connection" (request-attributes request))
        => (lambda (x) (string-contains-ci (cdr x) "keep-alive")))
-      (else #t))))
+      (else #f))))
 
 (define make-http-server
   (##lambda (#!key
