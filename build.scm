@@ -40,16 +40,36 @@
     fetchwrite
     ))
 
+(define (time> x y)
+  (> (time->seconds (file-info-last-modification-time (file-info x)))
+     (time->seconds (file-info-last-modification-time (file-info y)))))
+
+(define (compile-if-needed x)
+  (let ((src (string-append x ".scm"))
+        (hdr (string-append x "#.scm"))
+        (obj (string-append x ".o1")))
+    (cond
+      ((and (file-exists? obj)
+            (or (time> src obj)
+                (and (file-exists? hdr) (time> hdr obj))))
+       (delete-file obj)
+       (print "Compiling " x " ... ")
+       (compile-file src)
+       (println "done."))
+      (else (println "File " src " does not need compilation, skipping.")))))
+
 (define (compile-sqlite)
   (with-exception-catcher
-    (lambda ()
+    (lambda (e)
       (println "WARNING: sqlite3 not compiled."))
     (lambda ()
       (let ((sqlite-flags (with-input-from-process
-                           '(path: "pkg-config" arguments: ("--cflags" "sqlite3"))
+                           '(path: "pkg-config"
+                             arguments: ("--cflags" "sqlite3"))
                            read-line))
            (sqlite-libs (with-input-from-process
-                          '(path: "pkg-config" arguments: ("--libs" "sqlite3"))
+                          '(path: "pkg-config"
+                            arguments: ("--libs" "sqlite3"))
                           read-line)))
        (if (file-exists? "sqlite3.o1")
            (delete-file "sqlite3.o1"))
@@ -59,18 +79,14 @@
          ld-options: sqlite-libs)
        (println "done.")))))
 
-(parameterize ((current-directory dir))
-  (for-each
-    (lambda (x)
-      (let* ((name (symbol->string x))
-             (src (string-append name ".scm"))
-             (obj (string-append name ".o1")))
-        (if (file-exists? obj)
-            (delete-file obj))
-        (print "Compiling " x " ... ")
-        (compile-file src)
-        (println "done.")))
-    srcs)
-  (compile-sqlite)
-  )
+(define (build)
+  (parameterize ((current-directory dir))
+    (for-each
+      (lambda (x)
+        (let ((name (symbol->string x)))
+          (compile-if-needed name)))
+      srcs)
+    (compile-sqlite)))
+
+(build)
 
