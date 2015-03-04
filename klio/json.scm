@@ -54,7 +54,7 @@
 ;;;
 
 
-(define (json-read #!optional (port (current-output-port)))
+(define (json-read #!optional (port (current-input-port)))
 
   (define lookahead (peek-char port))
 
