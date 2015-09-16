@@ -3,7 +3,7 @@
     <title>Klio</title>
     <style>
       #frame {
-      	width: 700px;
+      	width: 500px;
       	height: 99%;
         margin-left: auto;
       	margin-right: auto;
@@ -13,20 +13,28 @@
       	left: 0;
       	width: 128px;
       }
+      #logo {
+	float: left;
+	left: 0;
+	width: 128px;
+      }
+      #title {
+        float: left;
+      }
       #header {
       	position: absolute;
       	top: 2px;
       	height: 128px;
       }
-      #header h1 {
+      #header h2 {
       	font-size: 48px;
       }
       #contents {
-	float: left;
       	width: 500px;
       	top: 0px;
-      	left: 200px;
-      	bottom: 32px;
+        bottom: 5px;
+	margin-left: auto;
+	margin-right: auto;
       }
       #contents > * {
 	width: 500px;
@@ -37,9 +45,7 @@
       }
 
       #footer {
-      	position: absolute;
-      	bottom: 2px;
-      	font-size: 0.7em;
+      	font-size: 0.5em;
       }
 
       #license-img {
@@ -48,6 +54,7 @@
       #license-text {
       	float: left;
       	margin-left: 1em;
+      	font-size: 0.7em;
       }
       .description {
 	position: absolute;
@@ -61,75 +68,16 @@
 
     </style>
 
-    <script src="jquery-1.6.4.min.js"></script>
-    <script>
-    function show_section(section) {
-      $('.description').css('visibility', 'hidden');
-      $(section).css('visibility', 'visible');
-    }
-    $(document).ready(function () {
-      $('.lnk').hover(function () {
-	document.body.style.cursor='pointer';
-      },function () {
-	document.body.style.cursor='default';
-      });
-
-      $('#home_lnk').click(function () { show_section('#intro'); });
-      $('#ports_lnk').click(function () { show_section('#ports'); });
-      $('#libraries_lnk').click(function () { show_section('#libraries'); });
-      $('#webserver_lnk').click(function () { show_section('#webserver'); });
-      $('#scada_lnk').click(function () { show_section('#scada'); });
-      $('#ai_lnk').click(function () { show_section('#ai'); });
-      $('#acknowledgments_lnk').click(function () {
-	  show_section('#acknowledgents');
-      });
-      $('.back').click(function () { show_section('#intro'); });
- 
-      $('#intro').css('visibility', 'visible');
-    });
-    </script>
-
-    <script type="text/javascript">
-
-      var _gaq = _gaq || [];
-      _gaq.push(['_setAccount', 'UA-31415204-1']);
-      _gaq.push(['_trackPageview']);
-
-      (function() {
-	var ga = document.createElement('script');
-	ga.type = 'text/javascript';
-	ga.async = true;
-        ga.src = ('https:' == document.location.protocol
-	  ? 'https://ssl'
-	  : 'http://www') + '.google-analytics.com/ga.js';
-	var s = document.getElementsByTagName('script')[0];
-	s.parentNode.insertBefore(ga, s);
-      })();
-
-    </script>
   </head>
   <body style="cursor: default;">
-    <div id="frame">
-
-      <div id="left">
-	<div id="logo">
-	  <img src="klio-logo.png">
-	</div>
-	<ul>
-	  <li id="home_lnk" class="lnk">Home</li>
-	  <li id="ports_lnk" class="lnk">Platforms</li>
-	  <br>
-	  <li id="libraries_lnk" class="lnk">Libraries</li>
-	  <li id="webserver_lnk" class="lnk">Web Server</li>
-	  <li id="scada_lnk" class="lnk">Scada</li>
-	  <li id="ai_lnk" class="lnk">Ai</li>
-	</ul>
-      </div>
-
       <div id="contents">
 
-	<div style="visibility: visible;" id="intro" class="description">
-	  <h1>Klio</h1>
+	  <div id="logo">
+	    <img src="klio-logo.png">
+	  </div>
+          <div id="title">
+	    <h1>Klio</h1>
+          </div>
 	  <p>Klio is a collection of open-source, production-quality tools for
 	  the Gambit-C Scheme system.  Its development is driven from
 	  real-world requests in the field of industrial automation, and
@@ -143,13 +91,10 @@
 	
 	  <p>Klio is released under LGPL license.  The code can be found at:
 	  <a href="https://github.com/mbenelli/klio">
-	    https://github.com/mbenelli/klio
 	  </a></p>
 
-	</div>
 
-	<div style="visibility: hidden;" id="ports" class="description">
-	  <h1>Platforms</h1>
+	  <h2>Platforms</h2>
 	  <p>Klio has been used and tested on following platforms:</p>
 	  <ul>
       <li>x86-64 - OpenBSD</li>
@@ -163,61 +108,56 @@
 	  </ul>
 	  <p>Many thanks to Marina Pettinari and Andrea Baldini for their
 	  help in porting on SH-2/ucLinux.</p>
-	</div>
 
-	<div style="visibility: hidden;" id="libraries" class="description">
-	  <h1>Klio Libraries </h1>
+          <h2>Components</h2>
+
+	  <h3>Klio Libraries </h3>
 	  <p>Utilities for day by day development: data structures, regular
 	  expressions, date and time processing, xml parsing and authoring,
 	  json conversion, database access and so on.  Most of these libraries
 	  come from careful design and extensive real-world testing.
 	  A continuous effort is spent in tuning their performance and
 	  usability.</p>
-        </div>
 
-	<div style="visibility: hidden;" id="webserver" class="description">
-	  <h1>Klio Web Server</h1>
+	  <h3>Klio Web Server</h3>
 	  <p>A powerful and fast web server, it offers the flexibily of
 	  dynamical languages and the performance of compiled ones.  It is
 	  used in several production environments on a variety of
 	  architectures, as a key element in critical application on systems
 	  with constrainted resources.</p>
-        </div>
 
-	<div style="visibility: hidden;" id="scada" class="description">
-	  <h1>Klio SCADA</h1>
+	  <h3>Klio SCADA</h3>
 	  <p>Interfaces with PLCs using standards protocols like modbus or
 	  fetchwrite, taking advantage of meta-programming facilities for
 	  generate configurations and addresses mapping from a variety of
 	  specification sources.</p>
-        </div>
 
-	<div style="visibility: hidden;" id="ai" class="description">
-	  <h1>Klio AI</h1>
+	  <h3>Klio AI</h3>
 	  <p>Work in progress on simple and powerful synergy between classical
 	  AI tools (searching, plannig) and statistical and signal processing
 	  algorithim</p>
-        </div>
 
-      </div>
-
-
-      <div id="footer">
-	<div id="license-img">
+        <hr>
+        <center>
+	<span id="license-img">
 	  <img alt="Creative Commons License" style="border-width: 0pt;"
 	  src="http://i.creativecommons.org/l/by-nc-nd/3.0/80x15.png">
-	</div>
-	<div id="license-text">
+	</span>
+	<span id="license-text">
 	  Klio logo by
-	  <a xmlns:cc="http://creativecommons.org/ns#" href="http://mbenelli.github.com/klio" property="cc:attributionName" rel="cc:attributionURL">Marco Benelli</a>
+	  <a xmlns:cc="http://creativecommons.org/ns#"
+             href="http://mbenelli.github.com/klio"
+             property="cc:attributionName"
+             rel="cc:attributionURL">Marco Benelli</a>
 	  is licensed under a
+          <br>
 	  <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/">
 	    Creative Commons Attribution-NonCommercial-NoDerivs 3.0 Unported
 	    License</a>.
-	</div>
+	</span>
+       </center>
       </div>
 
-    </div>
   </body>
 </html>
 
