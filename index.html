@@ -3,76 +3,29 @@
     <link rel="icon" href="favicon.ico">
     <title>Klio</title>
     <style>
-      #left {
-	float: left;
-      	left: 0;
-      	width: 128px;
+      h1 {
+        text-align: center;
       }
-      #logo {
-	float: left;
-	left: 0;
-	width: 128px;
+      h2 {
+        color: #770000;
       }
-      #title {
-        float: left;
-      }
-      #header {
-      	position: absolute;
-      	top: 2px;
-      	height: 128px;
-      }
-      #header h2 {
-      	font-size: 48px;
-      }
-      #contents {
+      body {
       	width: 500px;
-      	top: 0px;
-        bottom: 5px;
 	margin-left: auto;
 	margin-right: auto;
       }
-      #contents > * {
-	width: 500px;
+      p {
+        text-align: justify;
       }
-
-      dt {
-      	font-weight: bold;
-      }
-
-      #footer {
-      	font-size: 0.5em;
-      }
-
-      #license-img {
-      	float: left;
-      }
-      #license-text {
-      	float: left;
-      	margin-left: 1em;
+      fn {
       	font-size: 0.7em;
       }
-      .description {
-	position: absolute;
-	visibility: hidden;
-	top: 0px;
-	padding: 30px;
-      }
-      .back {
-      	text-decoration: underline;
-      }
-
     </style>
 
   </head>
-  <body style="cursor: default;">
-      <div id="contents">
+  <body>
+      <h1>Klio</h1>
 
-	  <div id="logo">
-	    <img src="klio-logo.png">
-	  </div>
-          <div id="title">
-	    <h1>Klio</h1>
-          </div>
 	  <p>Klio is a collection of open-source, production-quality tools for
 	  the Gambit-C Scheme system.  Its development is driven from
 	  real-world requests in the field of industrial automation, and
@@ -92,9 +45,9 @@
 	  <h2>Platforms</h2>
 	  <p>Klio has been used and tested on following platforms:</p>
 	  <ul>
-      <li>x86-64 - OpenBSD</li>
+            <li>x86-64 - OpenBSD</li>
 	    <li>x86    - FreeBSD</li>
-      <li>x86-64 - GNU/Linux</li>
+            <li>x86-64 - GNU/Linux</li>
 	    <li>x86    - GNU/Linux</li>
 	    <li>ARM    - GNU/Linux</li>
 	    <li>SH2    - ucLinux</li>
@@ -104,9 +57,7 @@
 	  <p>Many thanks to Marina Pettinari and Andrea Baldini for their
 	  help in porting on SH-2/ucLinux.</p>
 
-          <h2>Components</h2>
-
-	  <h3>Klio Libraries </h3>
+	  <h2>Klio Libraries </h2>
 	  <p>Utilities for day by day development: data structures, regular
 	  expressions, date and time processing, xml parsing and authoring,
 	  json conversion, database access and so on.  Most of these libraries
@@ -114,44 +65,38 @@
 	  A continuous effort is spent in tuning their performance and
 	  usability.</p>
 
-	  <h3>Klio Web Server</h3>
+	  <h2>Klio Web Server</h2>
 	  <p>A powerful and fast web server, it offers the flexibily of
 	  dynamical languages and the performance of compiled ones.  It is
 	  used in several production environments on a variety of
 	  architectures, as a key element in critical application on systems
 	  with constrainted resources.</p>
 
-	  <h3>Klio SCADA</h3>
+	  <h2>Klio SCADA</h2>
 	  <p>Interfaces with PLCs using standards protocols like modbus or
 	  fetchwrite, taking advantage of meta-programming facilities for
 	  generate configurations and addresses mapping from a variety of
 	  specification sources.</p>
 
-	  <h3>Klio AI</h3>
+	  <h2>Klio AI</h2>
 	  <p>Work in progress on simple and powerful synergy between classical
 	  AI tools (searching, plannig) and statistical and signal processing
 	  algorithim</p>
 
-        <hr>
-        <center>
-	<span id="license-img">
-	  <img alt="Creative Commons License" style="border-width: 0pt;"
-	  src="http://i.creativecommons.org/l/by-nc-nd/3.0/80x15.png">
-	</span>
-	<span id="license-text">
+        <hr></hr>
+	<fn>
 	  Klio logo by
 	  <a xmlns:cc="http://creativecommons.org/ns#"
              href="http://mbenelli.github.com/klio"
              property="cc:attributionName"
              rel="cc:attributionURL">Marco Benelli</a>
 	  is licensed under a
-          <br>
-	  <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/">
-	    Creative Commons Attribution-NonCommercial-NoDerivs 3.0 Unported
-	    License</a>.
-	</span>
-       </center>
-      </div>
+	  <a rel="license"
+	     href="http://creativecommons.org/licenses/by-nc-nd/3.0/">
+	     Creative Commons Attribution-NonCommercial-NoDerivs 3.0 Unported
+	     License</a>.
+	</fn>
+
 
   </body>
 </html>
