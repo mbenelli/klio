@@ -1,0 +1,22 @@
+h1 {
+  text-align: center;
+  font-size: 2em;
+}
+
+h2 {
+  font-size: 1.1em;
+}
+
+body {
+  width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+p {
+  text-align: justify;
+}
+
+fn {
+  font-size: 0.7em;
+}
