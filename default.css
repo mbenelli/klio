@@ -1,5 +1,5 @@
 body {
-  width: 30em;
+  width: 35em;
   margin-left: auto;
   margin-right: auto;
   font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -8,11 +8,14 @@ body {
 
 h1 {
   text-align: center;
-  font-size: 2em;
+  font-family: Bitter, sans-serif;
+  font-size: 40px;
+  font-weight: 400;
 }
 
 h2 {
-  font-size: 1.1em;
+  font-family: Bitter, sans-serif;
+  font-weight: 400;
 }
 
 fn {
