@@ -18,6 +18,27 @@ h2 {
     font-weight: 400;
 }
 
+table {
+    border-collapse: collapse;
+    width: 100%;
+    margin-left: auto;
+    margin-right:auto;
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+
+table, th, td {
+    border: 1px solid black;
+}
+
+th {
+    padding: 15px;
+}
+
+td {
+    padding: 15px;
+}
+
 fn {
     font-size: 0.7em;
 }
