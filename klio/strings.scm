@@ -202,7 +202,7 @@
 ;;; and longer ones. When done, we allocate an answer string and copy the
 ;;; chars over from the chunk buffers.
 
-(define (string-unfold p f g seed #!optional (base "") (make-final (lambda (x) x)))
+(define (string-unfold p f g seed #!optional (base "") (make-final (lambda (x) "")))
 
     (let lp ((chunks '())               ; Previously filled chunks
              (nchars 0)                 ; Number of chars in CHUNKS
