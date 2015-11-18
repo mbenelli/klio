@@ -81,6 +81,8 @@
   string-map!
   string-fold
   string-fold-right
+  string-unfold
+  string-unfold-right
   string-for-each
   string-for-each-index
                                         ; replicate & rotate
