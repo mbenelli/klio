@@ -2,21 +2,18 @@ body {
     width: 35em;
     margin-left: auto;
     margin-right: auto;
-    font-family: 'Open Sans', sans-serif;
     font-size: 16px;
     font-weight: normal;
 }
 
 h1 {
     text-align: center;
-    font-family: Bitter, sans-serif;
     font-size: 40px;
     font-weight: 400;
 }
 
 h2 {
-    font-family: Bitter, sans-serif;
-    font-weight: 400;
+    font-weight: 400; 
 }
 
 table {
