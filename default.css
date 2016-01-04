@@ -3,7 +3,7 @@ body {
     margin-left: auto;
     margin-right: auto;
     font-weight: normal;
-    font-family: Cantarell, sans-serif
+    line-height: 140%;
 }
 
 h1 {
@@ -47,7 +47,7 @@ fn {
 /* Fonts scales. */
 
 body {
-  font-size: 100%;
+  font-size: 18px;
 }
 
 body, caption, th, td, input, textarea, select, option, legend, fieldset, h1, h2, h3, h4, h5, h6 {
